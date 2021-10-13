@@ -1,0 +1,49 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(wbstats)
+```
+
+# Data setup
+
+GDP: current ppp 95
+
+Log output per worker - PWT
+
+```{r}
+wb(indicator = "NY.GDP.PCAP.PP.CD")
+```
+
+democracy index: acemoglue honlap
+
+https://economics.mit.edu/faculty/acemoglu/data/ajr2001
+
+DTA és DO
+
+Constrain of executive
+
+http://www.systemicpeace.org/inscrdata.html
+
+polity5: democracy index & Constrain of executive
+
+temperature: ace
+
+dummy landlocked: ace
+
+Malaria: gallup cikkből kinézni 
+
+Latitude: r beépített
+
+Yellow fever: ?
+
+
+
+
