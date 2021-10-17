@@ -221,6 +221,53 @@ p5v2018 %>%
 
 1900-ban csak 15 országra érhető el adat a 64 elemezni kívántból.
 
+## Table 2
+
+```{r}
+ace_data2
+```
+
+
+```{r}
+tibble(model_range = c("Whole world", "Base sample")) %>% 
+  slice(rep(1:n(), times = 4)) %>% 
+  mutate(
+    model = str_c("Model ", row_number()),
+    explanatory = c(
+      "avexpr",
+      "avexpr",
+      "avexpr + lat_abst",
+      "africa + lat_abst + avexpr + other + asia",
+      "avexpr + lat_abst",
+      "africa + lat_abst + avexpr + other + asia",
+      "avexpr",
+      "avexpr"
+    ),
+    dependent = c(rep("logpgp95", 6), rep("loghjypl", 2)),
+    formula = str_c(dependent, " ~ ", explanatory),
+    data = list(ace_data2),
+    var_names = map(data, names),
+    var_names = map2(var_names, formula, ~ keep(.x, function(x) str_detect(.y, x))),
+    data = map2(data, model_range, ~ switch(.y, "Base sample" =  filter(.x, !is.na(baseco)), .x)),
+    data = map2(data, var_names, select),
+    data = map(data, na.omit),
+    fit = map2(formula, data, lm),
+    map_df(fit, ~ broom::glance(.)["r.squared"]),
+    coef = map(fit, broom::tidy)
+  ) %>% 
+  unnest(coef) %>% 
+  transmute(model, model_range, r2 = scales::percent(r.squared), term,
+            est = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  filter(term != "(Intercept)") %>% 
+  pivot_wider(names_from = term, values_from = est) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .))
+```
+
+
+
+
 
 democracy index: acemoglue honlap
 
