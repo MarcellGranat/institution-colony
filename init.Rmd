@@ -1,38 +1,228 @@
 ---
-title: "Untitled"
+title: "Acemoglu adatok keresése"
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 ```
 
 ```{r}
 library(tidyverse)
 library(wbstats)
+library(printr)
+
+WD <- gsub(getwd(), pattern = "insution-colony.*", replacement = "insution-colony")
 ```
 
-# Data setup
+## Data from Acemoglu's site
 
-GDP: current ppp 95
+Összehasonlításként az összes csatolt adatot letöltöttem Acemoglu honalapjáról, hogy ellenőrizni tudjuk az általunk gyűjtöttek helyességét. Sajnos már az ide feltöltött adatok sem minden esetben korrektek. Az adatfájlok mellé feltöltött .do fájlban az alábbi komment olvasható például: "I am not sure what values of extmort4 were used to calculate quantiles, perhaps from an earlier version of the data that I do not have access to. Thus, I cannot exactly reproduce Table 1, but the summary statistics that emerge using quantiles of extmort4 in the final dataset are similar."
 
-Log output per worker - PWT
+`ace_data1` tartalmazza az Acemoglu oldalára Table 2 pont alatt feltöltött DTA fájl adatait.
 
 ```{r}
-wb(indicator = "NY.GDP.PCAP.PP.CD")
+list.files(str_c(WD, "/Acemoglu-data"), full.names = TRUE) %>% 
+  # read all data from authors website
+  walk(~ assign(x = str_c("ace_data", str_remove_all(., "\\D")), # new name
+                value = haven::read_dta(.), 
+                envir = .GlobalEnv)
+  )
 ```
 
-democracy index: acemoglue honlap
+A `basecp` vektor tartalmazza a felhasználni kívánt országok 3 betűs jelölését.
+
+```{r}
+baseco <- ace_data1 %>% 
+  filter(!is.na(baseco)) %>% 
+  pull(shortnam) %>% 
+  as.character()
+```
+
+## Table1
+
+Acemoglu oldaláról a táblázatok reprodukálást biztosító (/biztosístani szándékozó) stata kódok elérhetőek.
 
 https://economics.mit.edu/faculty/acemoglu/data/ajr2001
 
-DTA és DO
+Átlagok:
 
-Constrain of executive
+```{r}
+ace_data1 %>% 
+  select(-shortnam) %>% 
+  {
+    bind_rows(
+    mutate(., n = ifelse(is.na(baseco), "base", "outer")) %>%
+      group_by(n) %>%
+      summarise_all(mean, na.rm = TRUE) %>%
+      ungroup() %>%
+      filter(n == "base"),
+      summarise_all(., mean, na.rm = TRUE) %>% 
+        mutate(n = "world")
+    )
+  } %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = n)
+```
 
-http://www.systemicpeace.org/inscrdata.html
+Kvantilisek:
 
-polity5: democracy index & Constrain of executive
+```{r}
+ace_data1 %>% 
+  filter(!is.na(baseco)) %>%
+  mutate(g = cut(x = extmort4, breaks = quantile(extmort4, probs = (0:4)*.25), include.lowest = T, F)) %>%
+  group_by(g) %>% 
+  summarize_if(is.numeric, mean, na.rm = TRUE)
+```
+
+Ez alapján a változók mögötti értékek
+
+```{r}
+NiceName <- function(x) {
+  # code names and their meaning
+  case_when(
+    x == "logpgp95" ~ "Log GDP per capita (PPP) in 1995",
+    x == "loghjypl" ~ "Log output pper worker in 1988",
+    x == "avexpr" ~ "Average protection against expropriation risk",
+    x == "cons1" ~ "Constrain on executive in 1900",
+    x == "democ00a" ~ "Democracy in 1900",
+    x == "euro1900" ~ "Eurpean settlements in 1900",
+    x == "logem4" ~ "Log European settler mortaility",
+    TRUE ~ x
+  )
+}
+```
+
+### GDP
+
+Az összehasonlítás kivitelezéséhez minden változót azonos kóddal mentek, mint Acemoglu, de utána írom a forrás rövidítését.
+
+```{r}
+logpgp95_wb <- wb(indicator = "NY.GDP.PCAP.PP.CD") %>% 
+  filter(date == 1995) %>% 
+  transmute(geo = iso3c, logpgp95 = log(value))
+```
+
+```{r}
+pwt100 <- readxl::read_excel(str_c(WD, "/data/pwt100.xlsx"), sheet = "Data")
+```
+
+
+```{r}
+logpgp95_pwt <- pwt100 %>% 
+  filter(year == 1995) %>% 
+  transmute(geo = countrycode, logpgp95_pwt = log(rgdpe/pop))
+  # rgde: Expenditure-side real GDP at chained PPPs (in mil. 2017US$)
+```
+
+```{r}
+logpgp95_checkdf <- list(
+  logpgp95_wb %>%
+  set_names("shortnam", "logpgp95_wb"),
+  logpgp95_pwt %>% 
+  set_names("shortnam", "logpgp95_pwt"),
+  ace_data1
+) %>% 
+  reduce(full_join) %>% 
+  select(shortnam, starts_with("logpgp95")) %>% 
+  pivot_longer(-c(shortnam, logpgp95)) %>% 
+  na.omit() %>% 
+  mutate(
+    name = str_remove_all(name, "logpgp95_"),
+    name = str_to_upper(name)
+    )
+```
+
+```{r}
+ggplot(logpgp95_checkdf) +
+  aes(logpgp95, value, label = shortnam) + 
+  facet_wrap(~ name) +
+  geom_abline(color = "red4") +
+  geom_label()
+```
+
+```{r}
+logpgp95_checkdf %>% 
+  group_by(name) %>% 
+  summarise(
+    pearson_cor = cor(value, logpgp95, method = "pearson"),
+    spearman_cor = cor(value, logpgp95, method = "spearman"),
+    rel_diff = mean(value - logpgp95 / logpgp95),
+    n = n()
+    )
+```
+
+A korrelációk és az eltérések alapján számomra nem teljesen egyértelmű, hogy melyik forrás GDP adatát érdemesebb használni.
+
+### Log output pper worker in 1988
+
+```{r}
+loghjypl_pwt <- pwt100 %>% 
+  filter(year == 1988) %>% 
+  transmute(geo = countrycode, loghjypl_pwt = log(rgdpe/emp/1e5))
+```
+
+```{r}
+loghjypl_pwt %>% 
+  right_join(ace_data1, by = c("geo" = "shortnam")) %>% 
+  ggplot() +
+  aes(loghjypl, loghjypl_pwt, label = geo) +
+  geom_abline(color = "red4") + 
+  geom_label()
+```
+
+### Average protection against expropriation risk
+
+### Constrain on executive in 1900
+
+```{r}
+p5v2018 <- readxl::read_excel(str_c(WD, "/data/p5v2018.xls"))
+```
+
+
+```{r}
+cons1_p5 <- p5v2018 %>% 
+  filter(year == 1900) %>% 
+  select(geo = scode, cons1_p5 = xconst)
+```
+
+```{r}
+cons1_p5 %>% 
+  left_join(ace_data1, by = c("geo" = "shortnam")) %>% 
+  ggplot() +
+  aes(cons1, cons1_p5, label = geo) +
+  geom_abline(color = "red4") +
+  geom_label(nudge_x = .6, nudge_y = .6, alpha = .3, fill = "steelblue")
+```
+
+```{r}
+cons1_p5 %>% 
+  left_join(ace_data1, by = c("geo" = "shortnam")) %>% 
+  count(cons1_p5, cons1) %>% 
+  na.omit() %>% 
+  ggplot() +
+  aes(cons1, cons1_p5, fill = n, label = n) +
+  geom_abline() +
+  geom_tile(color = "black") +
+  geom_text(color = "white")
+```
+
+Az ábrák alapján úgy néz ki, hogy el sem érhetőek az egyes országokra a változók.
+
+```{r}
+p5v2018 %>% 
+  filter(scode %in% baseco) %>% 
+  count(year) %>% 
+  ggplot(aes(year, n)) +
+  geom_step()
+```
+
+1900-ban csak 15 országra érhető el adat a 64 elemezni kívántból.
+
+
+democracy index: acemoglue honlap
 
 temperature: ace
 
