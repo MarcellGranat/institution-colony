@@ -173,6 +173,19 @@ loghjypl_pwt %>%
   geom_label()
 ```
 
+```{r}
+logYL <- readxl::read_excel("data/logYL.xlsx")
+```
+
+```{r}
+logYL %>% 
+  select(shortnam = Cod, logYL:logL) %>% 
+  pivot_longer(-1) %>% 
+  left_join(ace_data1)
+  
+```
+
+
 ### Average protection against expropriation risk
 
 ### Constrain on executive in 1900
@@ -182,12 +195,33 @@ p5v2018 <- readxl::read_excel(str_c(WD, "/data/p5v2018d.xls"))
 ```
 
 ```{r}
+baseco %>% 
+  countrycode::countrycode("iso3c", "country.name")
+```
+
+```{r}
+tibble(baseco) %>% 
+  anti_join(tibble(baseco = unique(p5v2018$scode))) %>% 
+  mutate(c = countrycode::countrycode(baseco, "iso3c", "country.name"))
+```
+
+```{r}
 p5v2018 %>% 
-  transmute(scode, time = map2(byear, eyear, ~ seq(from = .x, to = .y)),
+  transmute(ccode, scode, country, 
+            iso = countrycode::countrycode(ccode, "cown", "iso3c")) %>% 
+  filter(scode != iso)
+```
+
+
+```{r}
+p5v2018 %>% 
+  transmute(
+    country = countrycode::countrycode(ccode, "cown", "iso3c"),
+    time = map2(byear, eyear, ~ seq(from = .x, to = .y)),
             exconst) %>% 
   unnest(time) %>% 
   filter(time == 1900 & scode %in% baseco) %>% 
-  count(scode, sort = T)
+  count(country, sort = T)
   left_join(ace_data1, by = c("scode" = "shortnam")) %>% 
   ggplot(aes(cons00a, exconst, label = scode)) +
   geom_label()
@@ -234,6 +268,76 @@ p5v2018 %>%
 
 1900-ban csak 15 országra érhető el adat a 64 elemezni kívántból.
 
+## Democracy index
+
+```{r}
+p5v_filtered <- p5v2018 %>% 
+  transmute(
+    country = countrycode::countrycode(ccode, "cown", "iso3c"),
+    time = map2(byear, eyear, ~ seq(from = .x, to = .y)),
+            exconst, democ) %>% 
+  unnest(time) %>% 
+  arrange(time) %>% 
+  mutate_at(-(1:2), ~ ifelse(. < 0, NA, .)) %>% 
+  group_by(country) %>% 
+  group_modify(~ fill(., everything(), .direction = "up")) %>% 
+  ungroup() %>% 
+  filter(!duplicated(str_c(country, time)))
+```
+
+```{r}
+exconst <- p5v_filtered %>% 
+  select(-democ) %>% 
+  filter(time %in% c(1900, 1970, 1990)) %>% 
+  group_by(time) %>%
+  group_modify(~ left_join(tibble(country = baseco), .)) %>% 
+  replace_na(list(exconst = 1)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = time, values_from = exconst, names_prefix = "exconst_")
+```
+
+```{r}
+democ <- p5v_filtered %>% 
+  arrange(time) %>% 
+  filter(!duplicated(country) | time == 1900) %>% 
+  pivot_longer(exconst:democ) %>% 
+  mutate(
+    time = ifelse(time == 1900, "00", "01"),
+    name = str_c(name, "_", time)
+    ) %>%  
+  select(-time) %>% 
+  pivot_wider(names_from = name, values_from = value)
+```
+
+```{r}
+ind_time <- p5v_filtered %>% 
+  group_by(country) %>% 
+  slice_min(time, n = 1) %>% 
+  ungroup() %>% 
+  transmute(country, ind_time = time)
+```
+
+
+
+```{r}
+tibble(baseco) %>% 
+  anti_join(tibble(baseco = unique(p5v_filtered$country)))
+```
+
+
+```{r}
+ace_data3 %>% 
+  filter(!is.na(indtime)) %>% 
+  arrange(desc(indtime))
+```
+
+
+```{r}
+ace_data3 %>% 
+  filter(!is.na(indtime))
+```
+
+
 ## Table 2
 
 ```{r}
@@ -277,6 +381,130 @@ tibble(model_range = c("Whole world", "Base sample")) %>%
   pivot_wider(names_from = model) %>% 
   mutate_all(~ ifelse(is.na(.), "", .))
 ```
+
+```{r}
+laporta_qgov <- readxl::read_excel("data/laporta_qgov.xls", 
+    sheet = "data")
+```
+
+```{r}
+laporta_qgov %>% 
+  transmute(country = str_to_upper(flopcode), lat_abst, legor_fr, legor_uk) %>% 
+  right_join(tibble(country = baseco))
+```
+
+Ez a tábla jó.
+
+```{r}
+laporta_qgov %>% 
+  transmute(country = str_to_upper(flopcode), lat_abst) %>% 
+  mutate(
+    continent = countrycode::countrycode(country, "iso3c", "continent")
+  ) %>% 
+  transmute(
+    country, lat_abst, continent = ifelse(continent %in% c("Americas", "Asia", "Africa"), continent, "other")
+  )
+```
+
+
+
+```{r}
+check_df_2 <- ace_data2 %>% 
+  transmute(country = shortnam, avexpr) %>% 
+  full_join(logpgp95_wb, by = c("country" = "geo")) %>% 
+  full_join(loghjypl_pwt, by = c("country" = "geo")) %>% 
+  full_join(
+  laporta_qgov %>% 
+  transmute(country = str_to_upper(flopcode), lat_abst) %>% 
+  mutate(
+    continent = countrycode::countrycode(country, "iso3c", "continent")
+  ) %>% 
+  transmute(
+    country, lat_abst, continent = ifelse(continent %in% c("Americas", "Asia", "Africa"), continent, "other")
+  )
+  ) %>% 
+  transmute(
+    shortnam = country, 
+    africa = ifelse(continent == "Africa", 1, 0),
+    lat_abst,
+    avexpr,
+    logpgp95 = logpgp95,
+    other = ifelse(continent == "other", 1, 0),
+    asia = ifelse(continent == "Asia", 1, 0),
+    loghjypl = loghjypl_pwt,
+    baseco = ifelse(shortnam %in% baseco, 1, NA)
+  ) %>% 
+  filter(shortnam %in% ace_data2$shortnam)
+```
+
+```{r}
+tibble(model_range = c("Whole world", "Base sample")) %>% 
+  slice(rep(1:n(), times = 4)) %>% 
+  mutate(
+    model = str_c("Model ", row_number()),
+    explanatory = c(
+      "avexpr",
+      "avexpr",
+      "avexpr + lat_abst",
+      "africa + lat_abst + avexpr + other + asia",
+      "avexpr + lat_abst",
+      "africa + lat_abst + avexpr + other + asia",
+      "avexpr",
+      "avexpr"
+    ),
+    dependent = c(rep("logpgp95", 6), rep("loghjypl", 2)),
+    formula = str_c(dependent, " ~ ", explanatory),
+    data = list(check_df_2),
+    var_names = map(data, names),
+    var_names = map2(var_names, formula, ~ keep(.x, function(x) str_detect(.y, x))),
+    data = map2(data, model_range, ~ switch(.y, "Base sample" =  filter(.x, !is.na(baseco)), .x)),
+    data = map2(data, var_names, select),
+    data = map(data, na.omit),
+    fit = map2(formula, data, lm),
+    map_df(fit, ~ broom::glance(.)["r.squared"]),
+    coef = map(fit, broom::tidy)
+  ) %>% 
+  unnest(coef) %>% 
+  transmute(model, model_range, r2 = scales::percent(r.squared), term,
+            est = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  filter(term != "(Intercept)") %>% 
+  pivot_wider(names_from = term, values_from = est) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .))
+```
+
+## Table 3
+
+```{r}
+check_df_3 <- ace_data8 %>% 
+select(country = shortnam, euro1900, logem4, avexpr) %>% 
+  left_join(ind_time) %>% 
+  left_join(democ[c("country", "exconst_00", "exconst_01", "democ_00")]) %>% 
+  replace_na(list(exconst_00 = 1, democ_00 = 1)) %>% 
+  left_join(transmute(laporta_qgov, country = str_to_upper(flopcode), lat_abst))
+  
+```
+
+```{r}
+check_df_3 %>% 
+  pivot_longer(c(exconst_00, democ_00, exconst_01, euro1900, logem4)) %>% 
+  group_by(name) %>% 
+  # select(avexpr, value) %>% 
+  nest() %>% 
+  crossing(lat = c(T, F)) %>% 
+  mutate(
+    f = "avexpr ~ value",
+    f = ifelse(lat, str_c(f, " + lat_abst"), f),
+    f = ifelse(name == "exconst_01", str_c(f, " + ind_time"), f)
+  ) %>% 
+mutate(
+    fit = map2(f, data, ~ lm(formula = .x, data = .y)),
+    map_df(fit, ~ broom::tidy(.)[2, c("estimate", "std.error")])
+  )
+```
+
+
 
 ## Table 7
 
