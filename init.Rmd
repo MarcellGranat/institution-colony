@@ -178,9 +178,22 @@ loghjypl_pwt %>%
 ### Constrain on executive in 1900
 
 ```{r}
-p5v2018 <- readxl::read_excel(str_c(WD, "/data/p5v2018.xls"))
+p5v2018 <- readxl::read_excel(str_c(WD, "/data/p5v2018d.xls"))
 ```
 
+```{r}
+p5v2018 %>% 
+  transmute(scode, time = map2(byear, eyear, ~ seq(from = .x, to = .y)),
+            exconst) %>% 
+  unnest(time) %>% 
+  filter(time == 1900 & scode %in% baseco) %>% 
+  count(scode, sort = T)
+  left_join(ace_data1, by = c("scode" = "shortnam")) %>% 
+  ggplot(aes(cons00a, exconst, label = scode)) +
+  geom_label()
+```
+
+exe: 1 ha nem volt független
 
 ```{r}
 cons1_p5 <- p5v2018 %>% 
@@ -203,7 +216,7 @@ cons1_p5 %>%
   count(cons1_p5, cons1) %>% 
   na.omit() %>% 
   ggplot() +
-  aes(cons1, cons1_p5, fill = n, label = n) +
+  aes(cons, cons1_p5, fill = n, label = n) +
   geom_abline() +
   geom_tile(color = "black") +
   geom_text(color = "white")
@@ -265,6 +278,27 @@ tibble(model_range = c("Whole world", "Base sample")) %>%
   mutate_all(~ ifelse(is.na(.), "", .))
 ```
 
+## Table 7
+
+```{r}
+ace_data7
+```
+
+```{r}
+malfal94 <- haven::read_dta(str_c(WD, "/data/gallup_malaria94.dta"))
+```
+
+```{r}
+malfal94 %>% 
+  select(geo = wbcode, malfal94) %>%
+  left_join(
+    ace_data7, by = c("geo" = "shortnam")
+  ) %>% 
+  select(geo, starts_with("mal")) %>% 
+  ggplot(aes(malfal94.y, malfal94.x, label = geo)) +
+  geom_abline(color = "red") +
+  geom_label()
+```
 
 
 
