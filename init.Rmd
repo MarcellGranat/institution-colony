@@ -1,6 +1,25 @@
 ---
-title: "Acemoglu adatok keresése"
-output: github_document
+title: "Acemoglu cikk reprodukálása"
+author: "Granát M., Papp L., Szabó D."
+date: \today
+output: 
+  pdf_document: 
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+  github_document:
+header-includes:
+- \usepackage{fancyhdr}
+- \usepackage[hungarian]{babel}
+- \usepackage{natbib}
+- \pagestyle{fancy}
+- \fancyhf{}
+- \fancyhead[RE,LO]{\leftmark}
+- \fancyfoot[C]{\thepage}
+- \usepackage{lscape}
+- \usepackage{pdfpages}
+- \usepackage{titling}
+- \posttitle{\end{center}}
 editor_options: 
   chunk_output_type: console
 ---
@@ -9,7 +28,7 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
 ```
 
-```{r}
+```{r echo=FALSE}
 library(tidyverse)
 library(wbstats)
 library(printr)
@@ -17,11 +36,13 @@ library(printr)
 WD <- gsub(getwd(), pattern = "insution-colony.*", replacement = "insution-colony")
 ```
 
-## Data from Acemoglu's site
+# Bevezetés
 
 Összehasonlításként az összes csatolt adatot letöltöttem Acemoglu honalapjáról, hogy ellenőrizni tudjuk az általunk gyűjtöttek helyességét. Sajnos már az ide feltöltött adatok sem minden esetben korrektek. Az adatfájlok mellé feltöltött .do fájlban az alábbi komment olvasható például: "I am not sure what values of extmort4 were used to calculate quantiles, perhaps from an earlier version of the data that I do not have access to. Thus, I cannot exactly reproduce Table 1, but the summary statistics that emerge using quantiles of extmort4 in the final dataset are similar."
 
-`ace_data1` tartalmazza az Acemoglu oldalára Table 2 pont alatt feltöltött DTA fájl adatait.
+Annak belátására, hogy jó adattal dolgozunk-e, az Acemoglu által feltöltött adatállománnyal és az általunk összegyűjtött adatokkal is reprodukálom a táblázatokat.
+
+Az `ace_data1` tartalmazza az Acemoglu oldalára Table 2 pont alatt feltöltött DTA fájl adatait.
 
 ```{r}
 list.files(str_c(WD, "/Acemoglu-data"), full.names = TRUE) %>% 
@@ -32,7 +53,7 @@ list.files(str_c(WD, "/Acemoglu-data"), full.names = TRUE) %>%
   )
 ```
 
-A `basecp` vektor tartalmazza a felhasználni kívánt országok 3 betűs jelölését.
+A `basecp` vektor tartalmazza a felhasználni kívánt országok 3 betűs jelölését (a 64 elemű minta).
 
 ```{r}
 baseco <- ace_data1 %>% 
@@ -41,11 +62,7 @@ baseco <- ace_data1 %>%
   as.character()
 ```
 
-## Table1
-
-Acemoglu oldaláról a táblázatok reprodukálást biztosító (/biztosístani szándékozó) stata kódok elérhetőek.
-
-https://economics.mit.edu/faculty/acemoglu/data/ajr2001
+# Táblázat 1
 
 Átlagok:
 
@@ -54,11 +71,11 @@ ace_data1 %>%
   select(-shortnam) %>% 
   {
     bind_rows(
-    mutate(., n = ifelse(is.na(baseco), "base", "outer")) %>%
-      group_by(n) %>%
-      summarise_all(mean, na.rm = TRUE) %>%
-      ungroup() %>%
-      filter(n == "base"),
+      mutate(., n = ifelse(is.na(baseco), "base", "outer")) %>%
+        group_by(n) %>%
+        summarise_all(mean, na.rm = TRUE) %>%
+        ungroup() %>%
+        filter(n == "base"),
       summarise_all(., mean, na.rm = TRUE) %>% 
         mutate(n = "world")
     )
@@ -77,7 +94,7 @@ ace_data1 %>%
   summarize_if(is.numeric, mean, na.rm = TRUE)
 ```
 
-Ez alapján a változók mögötti értékek
+Ez alapján a változók mögötti értékek^[Egy függvénybe beteszem a kódnak megfelelő neveket, így az ábrákon már ezzel könnyen tudunk kódok helyett változó neveket feltüntetni]:
 
 ```{r}
 NiceName <- function(x) {
@@ -95,9 +112,13 @@ NiceName <- function(x) {
 }
 ```
 
-### GDP
+## GDP adat összehasonlítás
 
 Az összehasonlítás kivitelezéséhez minden változót azonos kóddal mentek, mint Acemoglu, de utána írom a forrás rövidítését.
+
+### Világban adat
+
+A Világ Bank API segítségével azonnali hozzáférés biztosít az adattábláihoz, így csak annak kódjára van szükség.
 
 ```{r}
 logpgp95_wb <- wb(indicator = "NY.GDP.PCAP.PP.CD") %>% 
@@ -105,24 +126,27 @@ logpgp95_wb <- wb(indicator = "NY.GDP.PCAP.PP.CD") %>%
   transmute(geo = iso3c, logpgp95 = log(value))
 ```
 
+### Penn World Table adat
+
 ```{r}
 pwt100 <- readxl::read_excel(str_c(WD, "/data/pwt100.xlsx"), sheet = "Data")
 ```
 
+A megbeszélteknek megfelelően az `rgdpe` változót használjuk fel.
 
 ```{r}
 logpgp95_pwt <- pwt100 %>% 
   filter(year == 1995) %>% 
   transmute(geo = countrycode, logpgp95_pwt = log(rgdpe/pop))
-  # rgde: Expenditure-side real GDP at chained PPPs (in mil. 2017US$)
+# rgde: Expenditure-side real GDP at chained PPPs (in mil. 2017US$)
 ```
 
 ```{r}
 logpgp95_checkdf <- list(
   logpgp95_wb %>%
-  set_names("shortnam", "logpgp95_wb"),
+    set_names("shortnam", "logpgp95_wb"),
   logpgp95_pwt %>% 
-  set_names("shortnam", "logpgp95_pwt"),
+    set_names("shortnam", "logpgp95_pwt"),
   ace_data1
 ) %>% 
   reduce(full_join) %>% 
@@ -132,15 +156,16 @@ logpgp95_checkdf <- list(
   mutate(
     name = str_remove_all(name, "logpgp95_"),
     name = str_to_upper(name)
-    )
+  )
 ```
 
-```{r}
+```{r fig.cap="A Világ Bank, a Penn World Table és a cikkből származó GDP/fő adatok összehasonlítása"}
 ggplot(logpgp95_checkdf) +
   aes(logpgp95, value, label = shortnam) + 
   facet_wrap(~ name) +
   geom_abline(color = "red4") +
-  geom_label()
+  geom_label() + 
+  labs(x = "Cikkben szereplő adat", y = "Letöltött adat")
 ```
 
 ```{r}
@@ -151,42 +176,51 @@ logpgp95_checkdf %>%
     spearman_cor = cor(value, logpgp95, method = "spearman"),
     rel_diff = mean(value - logpgp95 / logpgp95),
     n = n()
-    )
+  )
 ```
 
-A korrelációk és az eltérések alapján számomra nem teljesen egyértelmű, hogy melyik forrás GDP adatát érdemesebb használni.
+A korrelációk és az eltérések alapján számomra nem teljesen egyértelmű, hogy melyik forrás GDP adatát érdemesebb használni, de az ábra alapján a Világ Bank adata közelebb van ahhoz, amit a cikkben látunk.
 
-### Log output pper worker in 1988
+### Foglakoztatottra jutó kibocsátás
+
+Ezt a változót is a Penn World Tableből emeltük ki.
 
 ```{r}
 loghjypl_pwt <- pwt100 %>% 
   filter(year == 1988) %>% 
-  transmute(geo = countrycode, loghjypl_pwt = log(rgdpe/emp/1e5))
+  mutate(
+    hjypl = rgdpe/emp/1e5,
+    hjypl = hjypl / hjypl[which(countrycode == "USA")],
+    loghjypl_pwt = log(hjypl)
+    )
 ```
 
 ```{r}
 loghjypl_pwt %>% 
-  right_join(ace_data1, by = c("geo" = "shortnam")) %>% 
+  right_join(ace_data1, by = c("countrycode" = "shortnam")) %>% 
   ggplot() +
-  aes(loghjypl, loghjypl_pwt, label = geo) +
+  aes(loghjypl, loghjypl_pwt, label = countrycode) +
   geom_abline(color = "red4") + 
   geom_label()
 ```
 
 ```{r}
-logYL <- readxl::read_excel("data/logYL.xlsx")
+logYL <- readxl::read_excel(str_c(WD, "/data/logYL.xlsx"))
 ```
 
 ```{r}
 logYL %>% 
   select(shortnam = Cod, logYL:logL) %>% 
   pivot_longer(-1) %>% 
-  left_join(ace_data1)
-  
+  left_join(ace_data1) %>% 
+  head()
 ```
 
+Ezt az adatot végül nem emlékszem miért nem használtuk fel.
 
 ### Average protection against expropriation risk
+
+Ezt a cikkből emeljük át.
 
 ### Constrain on executive in 1900
 
@@ -194,88 +228,14 @@ logYL %>%
 p5v2018 <- readxl::read_excel(str_c(WD, "/data/p5v2018d.xls"))
 ```
 
-```{r}
-baseco %>% 
-  countrycode::countrycode("iso3c", "country.name")
-```
-
-```{r}
-tibble(baseco) %>% 
-  anti_join(tibble(baseco = unique(p5v2018$scode))) %>% 
-  mutate(c = countrycode::countrycode(baseco, "iso3c", "country.name"))
-```
-
-```{r}
-p5v2018 %>% 
-  transmute(ccode, scode, country, 
-            iso = countrycode::countrycode(ccode, "cown", "iso3c")) %>% 
-  filter(scode != iso)
-```
-
-
-```{r}
-p5v2018 %>% 
-  transmute(
-    country = countrycode::countrycode(ccode, "cown", "iso3c"),
-    time = map2(byear, eyear, ~ seq(from = .x, to = .y)),
-            exconst) %>% 
-  unnest(time) %>% 
-  filter(time == 1900 & scode %in% baseco) %>% 
-  count(country, sort = T)
-  left_join(ace_data1, by = c("scode" = "shortnam")) %>% 
-  ggplot(aes(cons00a, exconst, label = scode)) +
-  geom_label()
-```
-
-exe: 1 ha nem volt független
-
-```{r}
-cons1_p5 <- p5v2018 %>% 
-  filter(year == 1900) %>% 
-  select(geo = scode, cons1_p5 = xconst)
-```
-
-```{r}
-cons1_p5 %>% 
-  left_join(ace_data1, by = c("geo" = "shortnam")) %>% 
-  ggplot() +
-  aes(cons1, cons1_p5, label = geo) +
-  geom_abline(color = "red4") +
-  geom_label(nudge_x = .6, nudge_y = .6, alpha = .3, fill = "steelblue")
-```
-
-```{r}
-cons1_p5 %>% 
-  left_join(ace_data1, by = c("geo" = "shortnam")) %>% 
-  count(cons1_p5, cons1) %>% 
-  na.omit() %>% 
-  ggplot() +
-  aes(cons, cons1_p5, fill = n, label = n) +
-  geom_abline() +
-  geom_tile(color = "black") +
-  geom_text(color = "white")
-```
-
-Az ábrák alapján úgy néz ki, hogy el sem érhetőek az egyes országokra a változók.
-
-```{r}
-p5v2018 %>% 
-  filter(scode %in% baseco) %>% 
-  count(year) %>% 
-  ggplot(aes(year, n)) +
-  geom_step()
-```
-
-1900-ban csak 15 országra érhető el adat a 64 elemezni kívántból.
-
-## Democracy index
+Az `scode` félrevezető változó volt, a `ccode` iso kódra való átváltásával volt érdemes elvégezni a párosítást.
 
 ```{r}
 p5v_filtered <- p5v2018 %>% 
   transmute(
     country = countrycode::countrycode(ccode, "cown", "iso3c"),
     time = map2(byear, eyear, ~ seq(from = .x, to = .y)),
-            exconst, democ) %>% 
+    exconst, democ) %>% 
   unnest(time) %>% 
   arrange(time) %>% 
   mutate_at(-(1:2), ~ ifelse(. < 0, NA, .)) %>% 
@@ -304,7 +264,7 @@ democ <- p5v_filtered %>%
   mutate(
     time = ifelse(time == 1900, "00", "01"),
     name = str_c(name, "_", time)
-    ) %>%  
+  ) %>%  
   select(-time) %>% 
   pivot_wider(names_from = name, values_from = value)
 ```
@@ -317,33 +277,16 @@ ind_time <- p5v_filtered %>%
   transmute(country, ind_time = time)
 ```
 
-
-
 ```{r}
 tibble(baseco) %>% 
-  anti_join(tibble(baseco = unique(p5v_filtered$country)))
+  anti_join(tibble(baseco = unique(p5v_filtered$country))) %>% 
+  pull(baseco) %>% 
+  {cat(str_c("Az alábbi országok azonban nem érhetőek el a táblázatban: ", str_c(., collapse = ", ")))}
 ```
 
 
-```{r}
-ace_data3 %>% 
-  filter(!is.na(indtime)) %>% 
-  arrange(desc(indtime))
-```
 
-
-```{r}
-ace_data3 %>% 
-  filter(!is.na(indtime))
-```
-
-
-## Table 2
-
-```{r}
-ace_data2
-```
-
+# Táblázat  2
 
 ```{r}
 tibble(model_range = c("Whole world", "Base sample")) %>% 
@@ -379,12 +322,13 @@ tibble(model_range = c("Whole world", "Base sample")) %>%
   pivot_wider(names_from = term, values_from = est) %>% 
   pivot_longer(-1) %>% 
   pivot_wider(names_from = model) %>% 
-  mutate_all(~ ifelse(is.na(.), "", .))
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Acemoglu adatai alapján készült becslésünk a táblázat 2-re.")
 ```
 
 ```{r}
 laporta_qgov <- readxl::read_excel("data/laporta_qgov.xls", 
-    sheet = "data")
+                                   sheet = "data")
 ```
 
 ```{r}
@@ -393,20 +337,10 @@ laporta_qgov %>%
   right_join(tibble(country = baseco))
 ```
 
-Ez a tábla jó.
-
-```{r}
-laporta_qgov %>% 
-  transmute(country = str_to_upper(flopcode), lat_abst) %>% 
-  mutate(
-    continent = countrycode::countrycode(country, "iso3c", "continent")
-  ) %>% 
-  transmute(
-    country, lat_abst, continent = ifelse(continent %in% c("Americas", "Asia", "Africa"), continent, "other")
-  )
-```
+Mind a 64 országra megvan benne a kellő adat (szélességi fog, francia/angol jogrendszer).
 
 
+A kontinens dummy-kat az R `{countrycode}` csomagjával készítettük.
 
 ```{r}
 check_df_2 <- ace_data2 %>% 
@@ -414,14 +348,14 @@ check_df_2 <- ace_data2 %>%
   full_join(logpgp95_wb, by = c("country" = "geo")) %>% 
   full_join(loghjypl_pwt, by = c("country" = "geo")) %>% 
   full_join(
-  laporta_qgov %>% 
-  transmute(country = str_to_upper(flopcode), lat_abst) %>% 
-  mutate(
-    continent = countrycode::countrycode(country, "iso3c", "continent")
-  ) %>% 
-  transmute(
-    country, lat_abst, continent = ifelse(continent %in% c("Americas", "Asia", "Africa"), continent, "other")
-  )
+    laporta_qgov %>% 
+      transmute(country = str_to_upper(flopcode), lat_abst) %>% 
+      mutate(
+        continent = countrycode::countrycode(country, "iso3c", "continent")
+      ) %>% 
+      transmute(
+        country, lat_abst, continent = ifelse(continent %in% c("Americas", "Asia", "Africa"), continent, "other")
+      )
   ) %>% 
   transmute(
     shortnam = country, 
@@ -471,19 +405,26 @@ tibble(model_range = c("Whole world", "Base sample")) %>%
   pivot_wider(names_from = term, values_from = est) %>% 
   pivot_longer(-1) %>% 
   pivot_wider(names_from = model) %>% 
-  mutate_all(~ ifelse(is.na(.), "", .))
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 2 az általunk összerakott adatokkal futtatva.")
 ```
 
-## Table 3
+# Táblázat  3
+
+```{r}
+logem4 <- ace_data7 %>% 
+  select(shortnam, logem4)
+```
+
+A halálozási adatot Acemoglutól vesszük át, csakúgy, mint az európaiak jelenlétét 1900-ban, illetve a kizsákmányolást.
 
 ```{r}
 check_df_3 <- ace_data8 %>% 
-select(country = shortnam, euro1900, logem4, avexpr) %>% 
+  select(country = shortnam, euro1900, logem4, avexpr) %>% 
   left_join(ind_time) %>% 
   left_join(democ[c("country", "exconst_00", "exconst_01", "democ_00")]) %>% 
   replace_na(list(exconst_00 = 1, democ_00 = 1)) %>% 
   left_join(transmute(laporta_qgov, country = str_to_upper(flopcode), lat_abst))
-  
 ```
 
 ```{r}
@@ -498,19 +439,205 @@ check_df_3 %>%
     f = ifelse(lat, str_c(f, " + lat_abst"), f),
     f = ifelse(name == "exconst_01", str_c(f, " + ind_time"), f)
   ) %>% 
-mutate(
+  mutate(
     fit = map2(f, data, ~ lm(formula = .x, data = .y)),
     map_df(fit, ~ broom::tidy(.)[2, c("estimate", "std.error")])
-  )
+  )%>% 
+  select(-data, -fit) %>% 
+  knitr::kable(caption = "Táblázat 3 az általunk összerakott adatokkal futtatva.")
 ```
 
+Az OLS becslések reprodukálásából az látszik, hogy elfogadhatóak az adataink.
 
+# Táblázat  4
 
-## Table 7
+4. táblázat C paneljének reprodukálása (csak az OLS becslések).
+
+A cikkből tudjuk, hogy kik a neo-európaik:
 
 ```{r}
-ace_data7
+neo_europe <- c("AUS", "CAN", "NZL", "USA")
 ```
+
+```{r}
+tibble(model = c("simple", "wo_neo_europes", "wo_africa", "continent_dummy")) %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  crossing(lat = c(F, T)) %>% 
+  bind_rows(tibble(model = "loghj", lat = F)) %>% 
+  mutate(
+    formula = ifelse(model == "loghj", "loghjypl ~ avexpr", "logpgp95 ~ avexpr"),
+    formula = ifelse(lat, str_c(formula, " + lat_abst"), formula),
+    data = list(ace_data4),
+    formula = ifelse(model == "continent_dummy", str_c(formula, " + africa + asia"), formula),
+    data = map2(data, model, function(d, m) {
+      if (m == "wo_africa") {
+        return(filter(d, africa == 0))
+      }
+      
+      if (m == "wo_neo_europes") {
+        return(filter(d, !(shortnam %in% neo_europe)))
+      }
+      d
+    }),
+    ols = map2(formula, data, lm),
+    map_df(ols, ~ select(filter(broom::tidy(.), term == "avexpr"), ols_term = estimate, ols_se = std.error))
+  )%>% 
+  select(-data, -ols) %>% 
+  knitr::kable(caption = "Táblázat 4 az Acemoglu által közétett adatokkal futtatva.")
+```
+
+A kód a 4. táblázathoz megfelelő, Acemoglu adataival jól adja vissza a cikkben közölt számokat.
+
+```{r}
+check_df_4 <- ace_data2 %>% 
+  transmute(country = shortnam, avexpr) %>% 
+  full_join(logpgp95_wb, by = c("country" = "geo")) %>% 
+  full_join(loghjypl_pwt, by = c("country" = "geo")) %>% 
+  full_join(
+    laporta_qgov %>% 
+      transmute(country = str_to_upper(flopcode), lat_abst) %>% 
+      mutate(
+        continent = countrycode::countrycode(country, "iso3c", "continent")
+      ) %>% 
+      transmute(
+        country, lat_abst, continent = ifelse(continent %in% c("Americas", "Asia", "Africa"), continent, "other")
+      )
+  ) %>% 
+  transmute(
+    shortnam = country, 
+    africa = ifelse(continent == "Africa", 1, 0),
+    lat_abst,
+    avexpr,
+    logpgp95 = logpgp95,
+    other = ifelse(continent == "other", 1, 0),
+    asia = ifelse(continent == "Asia", 1, 0),
+    loghjypl = loghjypl_pwt,
+    baseco = ifelse(shortnam %in% baseco, 1, NA),
+    rich4 = ifelse(shortnam %in% neo_europe, 1, 0)
+  ) %>% 
+  right_join(logem4)
+```
+
+
+```{r}
+tibble(model = c("simple", "wo_neo_europes", "wo_africa", "continent_dummy")) %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  crossing(lat = c(F, T)) %>% 
+  bind_rows(tibble(model = "loghj", lat = F)) %>% 
+  mutate(
+    formula = ifelse(model == "loghj", "loghjypl ~ avexpr", "logpgp95 ~ avexpr"),
+    formula = ifelse(lat, str_c(formula, " + lat_abst"), formula),
+    data = list(check_df_4),
+    formula = ifelse(model == "continent_dummy", str_c(formula, " + africa + asia"), formula),
+    data = map2(data, model, function(d, m) {
+      if (m == "wo_africa") {
+        return(filter(d, africa == 0))
+      }
+      
+      if (m == "wo_neo_europes") {
+        return(filter(d, !(shortnam %in% neo_europe)))
+      }
+      d
+    }),
+    ols = map2(formula, data, lm),
+    map_df(ols, ~ select(filter(broom::tidy(.), term == "avexpr"), ols_term = estimate, ols_se = std.error))
+  ) %>% 
+  select(-data, -ols) %>% 
+  knitr::kable(caption = "Táblázat 4 az általunk összerakott adatokkal futtatva.")
+```
+
+Mindegiyk modell esetében .1 értékkel alacsonyabb az avexpr együtthatója.
+
+# Táblázat  5
+
+5. táblázat C paneljének reprodukálása (csak az OLS becslések).
+
+```{r}
+tibble(model = 1:9) %>% 
+  mutate(
+    data = list(filter(ace_data5, baseco == 1)),
+    data = map2(data, model, function(d, m) {
+      if (m %in% 3:4) {
+        return(filter(d, f_brit == 1))
+      }
+      return(d)
+    }),
+    formula = "logpgp95 ~ avexpr",
+    formula = ifelse(model %in% c(2, 4, 6, 8, 9), str_c(formula, " + lat_abst"), formula),
+    formula = ifelse(model %in% 1:2, str_c(formula, " + f_brit + f_french"), formula),
+    formula = ifelse(model %in% 5:6, str_c(formula, " + sjlofr"), formula),
+    formula = ifelse(model == 9, str_c(formula, " + f_french + sjlofr"), formula),
+    ols = map2(formula, data, lm),
+    map_df(ols, ~ select(filter(broom::tidy(.), term == "avexpr"), ols_term = estimate, ols_se = std.error))
+  ) %>% 
+  select(-data, -ols) %>% 
+  knitr::kable(caption = "Táblázat 5 az Acemoglu által közétett adatokkal futtatva.")
+```
+
+A 4. modellnél nem tudni mi történik. A cikk alapján számunkra nem derül ki, hogy miben különbözik a 3. modelltől. Próbáltuk, hogy hátha a lattitude változó szerepeltetésének elfelejtése okozta a gondot, de nem jutottunk jobb eredményre.
+
+```{r}
+colonial_dummies <- readxl::read_excel("data/colonial dummies.xlsx")
+```
+
+```{r}
+ace_data5 %>% 
+  select(shortnam, f_brit) %>% 
+  left_join(colonial_dummies, by = c("shortnam" = "Code")) %>% 
+  replace_na(list(British = 0)) %>% 
+  count(f_brit, British)
+```
+
+A Wikipédiáról legyűjtött kolónia dummy változók közel sem egyeznek meg a cikkben publikálttal, így ezeket is Acemoglutól kell átvennünk.
+
+```{r}
+check_df_5 <- laporta_qgov %>% 
+  transmute(shortnam = str_to_upper(flopcode), catho80, muslim80, no_cpm80, sjlofr = legor_fr, lat_abst) %>% 
+  right_join(select(ace_data5, shortnam, f_brit, f_french, avexpr)) %>% 
+  left_join(logem4) %>% 
+  left_join(logpgp95_wb, by = c("shortnam" = "geo")) %>% 
+  filter(shortnam %in% baseco)
+```
+
+```{r}
+tibble(model = 1:9) %>% 
+  mutate(
+    data = list(check_df_5),
+    data = map2(data, model, function(d, m) {
+      if (m %in% 3:4) {
+        return(filter(d, f_brit == 1))
+      }
+      return(d)
+    }),
+    formula = "logpgp95 ~ avexpr",
+    formula = ifelse(model %in% c(2, 4, 6, 8, 9), str_c(formula, " + lat_abst"), formula),
+    formula = ifelse(model %in% 1:2, str_c(formula, " + f_brit + f_french"), formula),
+    formula = ifelse(model %in% 5:6, str_c(formula, " + sjlofr"), formula),
+    formula = ifelse(model == 9, str_c(formula, " + f_french + sjlofr"), formula),
+    ols = map2(formula, data, lm),
+    map_df(ols, ~ select(filter(broom::tidy(.), term == "avexpr"), 
+                         ols_term = estimate, ols_se = std.error))
+  )%>% 
+  select(-data, -ols) %>% 
+  knitr::kable(caption = "Táblázat 5 az Acemoglu által közétett adatokkal futtatva.")
+```
+
+Az előzőekben leírt 4. modell problémáján túl a 6. modell is némileg eltérő eredményt ad a mi adatainkkal.
+
+# Táblázat  6
+
+```{r}
+laporta_qgov %>% 
+  transmute(shortnam = str_to_upper(flopcode), avelf) %>% 
+  right_join(ace_data6, by = "shortnam") %>% 
+  select(1:3) %>% 
+  knitr::kable()
+```
+
+A két cikkben lévő adatok az átlagos fregmentációra vonatkozóan megegyeznek (nem lepődtünk meg, ezt hivatkozta).
+
+
+# Táblázat  7
 
 ```{r}
 malfal94 <- haven::read_dta(str_c(WD, "/data/gallup_malaria94.dta"))
@@ -528,21 +655,65 @@ malfal94 %>%
   geom_label()
 ```
 
+## Sachs geography
 
+Sajnos a változókat sehogy nem sikerült beolvasni. Az alábbi kód kiszedi a számokat, de a táblázat hiányai miatt a sorokat egyesével kell a megfelelő helyre tolni.
 
+```{r}
+list.files(str_c(WD, "/data/mc"), full.names = T) %>% 
+  map(~ tesseract::ocr(., engine = tesseract::tesseract("eng"))) %>% # read from image
+  map(function(imag) {
+    imag %>% 
+      str_split(pattern = "\\\n") %>%
+      map(~ str_split(., pattern = " ")) %>% 
+      map(enframe) %>% 
+      .[[1]] %>% 
+      mutate(
+        value = map(value, str_remove_all, "«"),
+        value = map(value, str_remove_all, "[*]"),
+        value = map(value, str_remove_all, "©"),
+        numbers = map(value, parse_double),
+        nonna = map(numbers, ~ which(!is.na(.))),
+        min_nonna = map_dbl(nonna, min),
+      ) %>% 
+      filter(is.finite(min_nonna)) %>% 
+      mutate(
+        country = map2_chr(value, min_nonna, ~ str_c(.x[1:(.y-1)], collapse = " ")),
+        # numbers = map2(numbers, min_nonna, ~ .x[.y:length(.x)]),
+        numbers = map(value, ~ keep(., function(u) str_detect(u, "\\d") | str_detect(u, "x") | str_detect(u, "X"))),
+        numbers = map(numbers, as.numeric)
+      )
+  }
+  ) %>% 
+  bind_rows() %>% 
+  select(country, numbers) %>% 
+  unnest(numbers) %>% 
+  group_by(country) %>% 
+  group_modify(~ mutate(.x, i = row_number())) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = i, values_from = numbers) %>% 
+  head()
+```
 
-democracy index: acemoglue honlap
+Dorka adatai
 
-temperature: ace
+```{r}
+adatok <- readxl::read_excel("data/adatok.xlsx")
+```
 
-dummy landlocked: ace
-
-Malaria: gallup cikkből kinézni 
-
-Latitude: r beépített
-
-Yellow fever: ?
-
+```{r}
+adatok %>% 
+  left_join(ind_time, by = c("shortnam" = "country")) %>% 
+  left_join(democ, by = c("shortnam" = "country")) %>% 
+  left_join(logpgp95_wb, by = c("shortnam" = "geo")) %>% 
+  left_join(loghjypl_pwt, by = c("shortnam" = "geo")) %>% 
+  rename(loghjypl = loghjypl_pwt) %>% 
+  mutate(
+    baseco = shortnam %in% baseco,
+    neo_europe = shortnam %in% neo_europe
+    ) %>% 
+  write.csv("dataset.csv")
+```
 
 
 

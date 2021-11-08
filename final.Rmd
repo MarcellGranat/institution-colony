@@ -1,0 +1,162 @@
+---
+title: "Acemoglu cikk reprodukálása"
+author: "Granát M., Papp L., Szabó D."
+date: \today
+output: 
+  pdf_document: 
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+  github_document:
+header-includes:
+- \usepackage{fancyhdr}
+- \usepackage[hungarian]{babel}
+- \usepackage{natbib}
+- \pagestyle{fancy}
+- \fancyhf{}
+- \fancyhead[RE,LO]{\leftmark}
+- \fancyfoot[C]{\thepage}
+- \usepackage{lscape}
+- \usepackage{pdfpages}
+- \usepackage{titling}
+- \posttitle{\end{center}}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+```
+
+```{r echo=FALSE}
+library(tidyverse)
+library(wbstats)
+library(printr)
+
+WD <- gsub(getwd(), pattern = "insution-colony.*", replacement = "insution-colony")
+
+dat <- rio::import("dataset2.0.csv") %>% 
+  mutate_all(str_replace_all, ",", ".") %>% 
+  mutate_at(- 1, as.numeric)
+```
+
+```{r}
+which_continent <- function(x) {
+  continent <- countrycode::countrycode(x, "iso3c", "continent")
+  out <- tibble(asia = 0, africa = 0, america = 0, other = 0)
+  
+  if (is.na(continent)) {
+    out$other <- 1
+    return(out)
+  }
+  
+  c("Americas", "Asia", "Africa")
+  if (continent == "Americas") {
+    out$america <- 1
+  } else if (continent == "Asia") {
+    out$asia <- 1
+  } else if (continent == "Africa") {
+    out$africa <- 1
+  } else {
+    out$other <- 1
+  }
+  out
+}
+```
+
+```{r}
+dat <- dat %>% 
+  mutate(
+    map_df(shortnam, which_continent)
+  )
+```
+
+
+```{r}
+dat %>% 
+  tibble() %>% 
+  select(shortnam, loghjypl) %>% 
+  mutate(
+    loghjypl_e = exp(loghjypl),
+    loghjypl_e2 = loghjypl_e / loghjypl_e[which(shortnam == "USA")],
+    loghjypl = log(loghjypl)
+  )
+```
+
+
+```{r}
+bind_rows(
+  dat %>% 
+    filter(baseco == 1) %>% 
+    mutate(sample = "Minta"),
+  dat %>% 
+    mutate(sample = "Világ egésze")
+) %>%
+  group_by(sample) %>% 
+  summarise_at(vars(logpgp95, avexpr, exconst_00, exconst_90, exconst_01, democ_00, euro1900, logem4, loghjypl),
+               ~ str_c(round(mean(., na.rm = TRUE), 2), " (", round(sd(., na.rm = TRUE), 2), ")")) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = sample) %>% 
+  mutate(name = NiceName(name)) %>% 
+  select(`Változó` = 1, 3, 2) %>% 
+  knitr::kable(caption = "Változók átlagai")
+```
+
+```{r}
+dat %>%
+  filter(!is.na(baseco) & !is.na(logem4)) %>%
+  mutate(g = cut(x = logem4, breaks = quantile(logem4, probs = (0:4)*.25), include.lowest = T, F)) %>%
+  select(g, logpgp95, avexpr, exconst_00, exconst_90, exconst_01, democ_00, euro1900, logem4, loghjypl) %>% 
+  group_by(g) %>% 
+  summarize_all(mean, na.rm = TRUE) %>% 
+  ungroup() %>% 
+  filter(!is.na(g)) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = g, names_prefix = "Kvartilis csoport: ")
+```
+
+## Táblázat 2
+
+
+```{r}
+range <- c("Whole world", "Base sample") %>% 
+  rep(times = 4)
+range[4] <- "Whole world"
+range[5] <- "Base sample"
+
+tibble(model_range = range) %>% 
+  mutate(
+    model = str_c("Model ", row_number()),
+    explanatory = c(
+      "avexpr",
+      "avexpr",
+      "avexpr + lat_abst",
+      "africa + lat_abst + avexpr + other + asia",
+      "avexpr + lat_abst",
+      "africa + lat_abst + avexpr + other + asia",
+      "avexpr",
+      "avexpr"
+    ),
+    dependent = c(rep("logpgp95", 6), rep("loghjypl", 2)),
+    formula = str_c(dependent, " ~ ", explanatory),
+    data = list(dat),
+    var_names = map(data, names),
+    var_names = map2(var_names, formula, ~ keep(.x, function(x) str_detect(.y, x))),
+    data = map2(data, model_range, ~ switch(.y, "Base sample" =  filter(.x, baseco == 1), .x)),
+    data = map2(data, var_names, select),
+    data = map(data, na.omit),
+    fit = map2(formula, data, lm),
+    map_df(fit, ~ broom::glance(.)["r.squared"]),
+    coef = map(fit, broom::tidy)
+  ) %>% 
+  unnest(coef) %>% 
+  transmute(model, model_range, r2 = scales::percent(r.squared), term,
+            est = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  filter(term != "(Intercept)") %>% 
+  pivot_wider(names_from = term, values_from = est) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 2 az általunk összerakott adatokkal futtatva.")
+```
+
