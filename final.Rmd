@@ -25,23 +25,84 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+knitr::opts_chunk$set(echo = FALSE, warning = F, message = F, error = T)
 ```
 
-```{r echo=FALSE}
+# Elméleti háttér
+
+## A tanulmányt megelőző legfontosabb cikkek összefoglalása:
+
+A fejlődésgazdaságtan a 20. század vége óta nagy figyelmet fordít a szerződések, a tulajdonjogok és a stabil intézményi környezet gazdasági növekedésben betöltött jelentős szerepére (pl. North, 1991; Leblang, 1996; Lin & Nugent, 1995). Ezen tényezők mellett egyéb szempontok is megjelentek az empirikus kutatásokban, melyek nehézségét sokszor a meghatározónak vélt körülmények számszerűsítése adta. La Porta és szerzőtársai (1999) az állam teljesítményét és a gazdasági teljesítményt kulturális és politikai tényezőkkel magyarázták, amihez többek között egy 1-től 5-ig terjedő skálán mért tulajdonjog indexet és egy 0 és 1 közé eső etnolingvisztikus széttöredezettségi indexet is felhasználtak. Gallup és szerzőtársai (1999) az egyes országok földrajzi elhelyezkedéséből adódó gazdasági determináltságát emelték ki, és azt találták elemzésükben, hogy a tengerparti szakaszoktól és folyóktól távol eső régiók, illetve az olyan régiók, ahol elterjedtek a trópusi betegségek, hátrányos helyzetben vannak a gazdasági növekedés tekintetében.
+
+## A tanulmány összefoglalása
+
+Acemoglu és szerzőtársai a *The Colonial Origins of Comparative Development: An Empirical Investigation* (2001) cikkükben azt vizsgálták, hogy az intézményi környezet meghatározó szerepet tölt-e be a gazdasági jólét alakulásában. A tanulmány eredetisége abban rejlik, hogy a szerzők, egy egyszerű OLS becslés endogenitásából származó inkonzisztenciát elkerülendő, úgy magyarázzák a jelenlegi gazdasági teljesítményt a jelenlegi intézményekkel a modellükben, hogy az egykor gyarmati státuszban lévő országokba érkező telepesek halálozási rátáját instrumentális változóként használják fel azért, hogy le tudják választani az exogén varianciát a jelenlegi intézmények minőségét mérő változóról.
+
+Gondolatmenetük szerint a telepesek halálozási rátája meghatározta a letelepedési esélyeket az adott gyarmaton, ami pedig hatással volt a kezdeti intézmények kialakításában. Ahol magas volt a halálozási ráta, ott a gyarmatosítók kizsákmányoló intézményeket hoztak létre, ezzel szemben pedig a letelepedésre alkalmas területeken támogató intézményrendszer került bevezetésre. A kizsákmányoló intézmények nem, vagy csak nagyon lassan képesek változni, ugyanis ezen gyarmatok irányítása kis csoportok kezében összpontosultak, akik nem voltak érdekeltek ezen intézmények megváltoztatásában/fejlesztésében. Ez a gyarmatok függetlenedése után sem változott, mert a helyi politikai elit akár a hadsereg segítségével is őrizte a kizsákmányoló intézményrendszert. Elmondhatjuk tehát, hogy a telepesek halálozási rátája meghatározza a gyarmatok kezdeti intézményrendszerét, amelyek jelentősen meghatározzák a ma működő intézményi környezetet is.
+
+A szerzők különböző földrajzi, kulturális, egészségügyi mutatókra, illetve az egykori gyarmatosítók kilétére is kontrolláltak, de egyik bevont változó hatására sem vesztette el szignifikanciáját az intézményi környezetet megragadó mutató, sőt a bevont változók nem tekinthetők szignifikánsnak, vagyis az intézmények a legfontosabb tényezők, amelyek meghatározzák a fejlettségi szintet, az intézmények mellett a többi változót el is lehet hagyni.
+
+## A tanulmány után íródott publikációk és kritikák összefoglalása:
+
+### Megerősítések
+
+A tanulmány eredményeit megerősíti Rodrik szerzőtársaival (2004). Tanulmányukban az intézményi környezet mellett elsősorban a földrajzi tényezőkre és kereskedelmi mutatókra fókuszáltak, de az utóbbiak elvesztették jelentőségüket az intézményekre kontrollálva. Hasonló eredményre jutott többek között Váry (2017) elemzése is, melyben térökonometriai módszerekkel arra a kérdésre kereste a választ, hogy egy adott gazdasági régió fejlettségére szignifikáns hatással van-e a földrajzi elhelyezkedés? Hipotézise szerint jobb fejlődési kilátásokkal rendelkezhetnek azok a régiók, amelyeket fejlett szomszédok vesznek körül, ugyanis a fejlett gazdaságok vívmányainak átgyűrűzése pozitív hatással lehet a kevésbé fejlett területekre is. Ám az elemzés eredménye azt igazolja, hogy a fejlettségi szintet nem a földrajzi adottságok, hanem az intézményi és kulturális tényezők határozzák meg.
+
+### Kritikák
+
+McArthur és Sachs (2001) azonban azt találták, hogy az intézmények mellett a földrajznak is meghatározó szerepe van, és úgy vélték, hogy Acemoglu és szerzőtársainak elemzése túl kis mintára redukálódott, ami így nem mutatott elég heterogenitást a földrajzi elhelyezkedés szempontjából. Glaeser és szerzőtársai (2004) kritizálták az instrumentális változó módszertanát, tanulmányukban az alapvető OLS modellekkel azt mutatták ki, hogy a humán tőkének fontosabb szerepe van a gazdasági növekedésben, mint az intézményi környezetnek. A szegény országok a diktátorok által alkalmazott jó politikák révén is fejlődhettek és ezt követően javíthatták politikai intézményeiket. Albouy (2012) kritikájában elsősorban az instrumentális változó, tehát a telepesek halálozási rátájának mérési hibájára hívta fel a figyelmet, ami érvelése szerint alkalmatlanná teszi a modellben való felhasználásra. Albouy kritikáit még ugyanebben az évben megcáfolták a szerzők (Acemoglu és szerzőtársai, 2012).
+
+# Adatok
+
+A teljes adatbázisunk 164 országot fed le, az elemzés során viszont sok esetben egy 64 elemű részmintát használtunk fel, ami egykori gyarmatországokat tartalmaz. A részminta megalkotásánál az eredeti cikk szerzői az adatok elérhetőségének szempontját vették figyelembe. Bár vannak változók, amik esetében ma már több ország adata elérhető, a reprodukálás során nem változtattunk a részmintán, mi is ugyanarra a 64 országra futtattuk a modelljeinket.
+
+A következőkben az adataink forrását, illetve az ezekből alkotott változóinkat mutatjuk be. Az eredeti tanulmányban felhasznált adatok elérhetők Acemoglu személyes honlapján, amit több változó esetében is kénytelenek voltunk használni a hivatkozott források elérhetetlensége miatt. Ilyen változó volt az átlagos védelem a kizsákmányolás veszélye ellen (1985-1995), az európai települések (1900), az európai leszármazottak aránya (1975), a telepesek halálozási rátája[[1]](#_ftn1), a sárga lázra, illetve a hőmérsékletre, a páratartalomra, a természeti erőforrásokra és a talajminőségre vonatkozó változók, illetve az országok tengerrel való szomszédságára vonatkozó dummy változó.
+
+Az 1995-ös egy főre jutó, vásárlóerőparitáson mért GDP adatokat a Világbank adatbázisából nyertük, az elemzéshez pedig a logaritmizált értékeket használtuk fel. Az 1988-as egy foglalkoztatottra jutó kibocsátás változóját a Penn World Table adatainak segítségével alkottuk meg a reál GDP és a foglalkoztatottak számának hányadosaként. Az elemzéshez ennek a hányadosnak a logaritmusát használtuk fel.
+
+A végrehajtó hatalom korlátaira és a demokrácia állapotára vonatkozó adatokat az eredeti cikkhez képest egy frissült adatállományból nyertük. A Polity V adatbázist a Center for Systemic Peace honlapjáról töltöttük le. Az etnolingvisztikus fragmentációra, a jogi eredetre, a különböző vallásokra és a gyarmattartókra, illetve a szélességi körökre vonatkozó változókat a hivatkozott forrás alapján La Porta és szerzőtársainak (1999) adatbázisából használtuk fel. A különböző vallásokat gyakorlók aránya az 1980-as évre vonatkozik, az tnolingvisztikus fragmentáció pedig 1960-as adatok alapján becsült érték.
+
+McArthur és Sachs (2001) tanulmányának köszönhetően fértünk hozzá a tengerparttól való távolság, a születéskori várható élettartam (1995), az ezer élveszületésre jutó gyermekhalandóság (1995) és az évi középhőmérséklet (1987) adataihoz. Az 1994-re vonatkozó malária adatokat a szerzők által megadott forráson (Gallup and Sachs, 1998) keresztül nem értük el. A hivatkozott szerzőpáros egy másik tanulmányához (Gallup és szerzőtársai, 2000) kötődő adatbázisból nyertük ki az adatokat, azonban a számításaink során ezek a számok erősen torzították az eredményeinket. Az Acemoglu által megadott malária indexet felhasználva viszont sokkal jobban tudtuk reprodukálni az eredményeket, ezért úgy döntöttünk, hogy a végső elemzésünkben ezeket az adatokat használjuk fel.
+
+Az adatok és a változónevek átláthatóságának érdekében az 1. mellékletben bemutatjuk a változóink tartalmát.
+
+# Táblázatok és ábrák reprodukálása
+
+## Leíró statisztika
+
+A tanulmány 1. táblázatában a szerzők a leíró statisztikákról adtak képet. Ennek reprodukálása során az eredményeink túlnyomórészben közel azonosak voltak a tanulmány eredményeivel. Az átlagaink a teljes adatbázison és a részmintán futtatva is csak minimális eltérést mutatnak az eredeti eredményekhez képest. A kvartilisek esetében a legnagyobb eltéréseket azok a változók mutatják, amiket a Polity V adatbázisából nyertünk, azaz a végrehajtó hatalom korlátozására és a demokrácia állapotára vonatkozó változók. Mivel ez egy 2000 óta többszörösen revideált adatbázis, az eredményeink eltérését ennek a felülvizsgálatnak tudjuk be.
+
+```{r}
 library(tidyverse)
 library(wbstats)
 library(printr)
+library(AER)
+source('C:/rprojects/institution-colony/utils.R', echo=F)
 
 WD <- gsub(getwd(), pattern = "insution-colony.*", replacement = "insution-colony")
 
-dat <- rio::import("dataset2.0.csv") %>% 
+dat <- rio::import("dataset3.0.csv") %>% 
   mutate_all(str_replace_all, ",", ".") %>% 
-  mutate_at(- 1, as.numeric)
+  mutate_at(- 1, as.numeric) %>% 
+  mutate(euro1900 = euro1900 / 100)
+
+list.files(str_c(WD, "/Acemoglu-data"), full.names = TRUE) %>% 
+  # read all data from authors website
+  walk(~ assign(x = str_c("ace_data", str_remove_all(., "\\D")), # new name
+                value = haven::read_dta(.), 
+                envir = .GlobalEnv)
+  )
+
+```
+
+```{r}
+dat[which(dat$shortnam == "ZAR"), "logpgp95"] <- 6.866933
+# taken from Acemoglu <- very different from other sources
 ```
 
 ```{r}
 which_continent <- function(x) {
+  # return continent as set of dummy columns
   continent <- countrycode::countrycode(x, "iso3c", "continent")
   out <- tibble(asia = 0, africa = 0, america = 0, other = 0)
   
@@ -71,18 +132,13 @@ dat <- dat %>%
   )
 ```
 
-
-```{r}
+```{r fig.cap="Telepesek halálozása és a GDP közötti kapcsolat"}
 dat %>% 
-  tibble() %>% 
-  select(shortnam, loghjypl) %>% 
-  mutate(
-    loghjypl_e = exp(loghjypl),
-    loghjypl_e2 = loghjypl_e / loghjypl_e[which(shortnam == "USA")],
-    loghjypl = log(loghjypl)
-  )
+  ggplot() + 
+  aes(logem4, logpgp95, label = shortnam) +
+  geom_text() +
+  geom_smooth(method = "lm", se = FALSE)
 ```
-
 
 ```{r}
 bind_rows(
@@ -97,14 +153,13 @@ bind_rows(
                ~ str_c(round(mean(., na.rm = TRUE), 2), " (", round(sd(., na.rm = TRUE), 2), ")")) %>% 
   pivot_longer(-1) %>% 
   pivot_wider(names_from = sample) %>% 
-  mutate(name = NiceName(name)) %>% 
   select(`Változó` = 1, 3, 2) %>% 
   knitr::kable(caption = "Változók átlagai")
 ```
 
 ```{r}
 dat %>%
-  filter(!is.na(baseco) & !is.na(logem4)) %>%
+  filter(baseco == 1 & !is.na(logem4)) %>%
   mutate(g = cut(x = logem4, breaks = quantile(logem4, probs = (0:4)*.25), include.lowest = T, F)) %>%
   select(g, logpgp95, avexpr, exconst_00, exconst_90, exconst_01, democ_00, euro1900, logem4, loghjypl) %>% 
   group_by(g) %>% 
@@ -112,11 +167,11 @@ dat %>%
   ungroup() %>% 
   filter(!is.na(g)) %>% 
   pivot_longer(-1) %>% 
-  pivot_wider(names_from = g, names_prefix = "Kvartilis csoport: ")
+  pivot_wider(names_from = g, names_prefix = "Kvartilis csoport: ") %>% 
+  knitr::kable(caption = "Átlag értékek a telepesek halálozási rátája alapján rendezett kvantilis csoportonként")
 ```
 
-## Táblázat 2
-
+A 2. táblázat nyolc OLS modell eredményeit mutatja be. Az eredményváltozó az első hat modell esetében az egy főre jutó GDP logaritmusa, a hetedik és nyolcadik modell esetében pedig az egy foglakoztatottra jutó kibocsátás logaritmusa. A táblázatban jelezzük, melyik modellt futtattuk mind a 164 országra, és melyiket a részmintánkra. A megfigyeléseink száma a „whole world" esetén eltér az eredeti cikkhez képest, mivel a GDP adatokat több országra értük el, mint az eredeti cikk szerzői. Az értékeink minden esetben nagyjából maximum 10% ponttal térnek el Acemogluék eredményeitől, és ezek az eltérések a teljes adatbázison futtatott modellekre jellemző, a részmintán futtatottak eredményei közel azonosak.
 
 ```{r}
 range <- c("Whole world", "Base sample") %>% 
@@ -150,7 +205,7 @@ tibble(model_range = range) %>%
     coef = map(fit, broom::tidy)
   ) %>% 
   unnest(coef) %>% 
-  transmute(model, model_range, r2 = scales::percent(r.squared), term,
+  transmute(model, model_range, r2 = scales::percent(r.squared), n_obs = as.character(map_dbl(data, nrow)), term,
             est = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
   filter(term != "(Intercept)") %>% 
   pivot_wider(names_from = term, values_from = est) %>% 
@@ -160,3 +215,1155 @@ tibble(model_range = range) %>%
   knitr::kable(caption = "Táblázat 2 az általunk összerakott adatokkal futtatva.")
 ```
 
+-   [x] ZAR GDP adatát pótoljuk
+
+Az átlagos védelem a kizsákmányolás veszélye ellen változó koefficiensei minimális eltérést mutatnak az eredeti eredményekhez képest, ami nem meglepő, hiszen ezt a változót a szerzők adatbázisából nyertük. Minden modell esetében szignifikáns ez a változó. A szélességi fok abszolút értékének koefficiense már nagyobb eltérést mutatnak. A harmadik modellünkben a szélességi fok szignifikáns változónak bizonyul, míg az eredeti cikkben nem, ezzel szemben viszont az ötödik modellünkben nem szignifikáns ez a változó, míg az eredeti cikkben igen. Ami a kontinentális dummykat illeti, a hatodik modellben az eredetieknek megfelel az eredményünk, mivel mind az afrikai, mind pedig az ázsiai dummy negatív és szignifikáns, azonban a negyedik modellünkben az ázsiai dummy bár negatív, de Acemogluék eredményével ellentétben nem szignifikáns. Az „egyéb" kontinensekre vonatkozó dummy egyik modell esetében sem szignifikáns, csakúgy, mint az eredeti tanulmányban. Habár a koefficiensek néhol jelentősen eltérnek a reprodukálandó eredményektől, a konklúziónk megegyezik a tanulmány szerzőiével. A szélességi körökre és a kontinensekre kontrollálva nem változik a kizsákmányolásra vonatkozó változó szignifikanciája, tehát ez a változó hatással van a mind az egy főre jutó GDP, mind pedig az egy foglalkoztatottra jutó kibocsátás alakulására.
+
+A kizsákmányolás és az egy főre jutó GDP közti kapcsolatot grafikusan is ábrázoltuk a 2. ábrán. A pontdiagram csak a 64 országot magában foglaló részmintát tartalmazza. Az ábra alapján feltételezhető, hogy szoros pozitív kapcsolat van a két változó között. Összehasonlítva az eredeti cikk 2. ábrájával, nagyon hasonló képet kapunk, ami nem meglepő, hiszen a kizsákmányolás változóját a szerzőktől vettük, a GDP adatokat pedig a szerzőkhöz hasonlóan a Világbank adatbázisából nyertük.
+
+```{r}
+dat %>% 
+  filter(baseco == 1) %>% 
+  ggplot(aes(avexpr, logpgp95, label = shortnam)) +
+  geom_text() + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_y_continuous(limits = c(4, 11))
+```
+
+Ahogy arról már írtunk, a tanulmány alapötlete, hogy a szerzők a kizsákmányolást a telepesek halálozási arányával instrumentálják, ezzel kezelve az endogenitás problémáját, illetve a kizsákmányolás változójának mérési hibáiból származó problémákat. A 3. ábrán a kizsákmányolás és a telepesek halálozási aránya közti kapcsolatot ábrázoljuk, ami tökéletesen megfelel az eredeti cikk ábrájának, mivel mindkét változó esetében csak a szerzők adatbázisára tudtunk támaszkodni. Az ábra alapján elmondható, hogy negatív kapcsolat van a két változó között.
+
+```{r}
+dat %>% 
+  filter(baseco == 1) %>% 
+  ggplot(aes(logem4, avexpr, label = shortnam)) +
+  geom_text() + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+-   [ ] 1+Három egyenlet felírása..
+
+Az (1) egyenlet mutatja a kapcsolatot a jelenlegi intézmények, valamint a GDP logaritmusa között.
+
+Az (1) egyenlet mutatja a kapcsolatot a jelenlegi intézmények, valamint a GDP logaritmusa között.
+
+A 3. Táblázat mutatja a három egyenlet OLS regresszióját.
+
+Az A panelben látható, hogy a függő változónk a jelenlegi intézményrendszert megragadó, az átlagos védelem a kizsákmányolás veszélye ellen (1985-1995) index, amit a korábbi intézményrendszert megtestesítő változókkal (A végrehajtó hatalom korlátozottsága a függetlenség első évében, a demokrácia erőssége 1900-ban, a végrehajtó hatalom korlátozottsága a függetlenség első évében, az európai települések 1900-ban), valamint a telepesek halálozási rátájával és az ország elhelyezkedésével (szélességi fokának abszolút értékével) magyarázunk. A felsorolt változók magyarázóerejét egyenkénk és a szélességi fokot megmutató változóval egyszerre vizsgáljuk. Eredményeink azt mutatják, hogy a jelenlegi intézményrendszert szignifikánsan határozzák meg a korábbi intézmények, valamint a telepesek halálozási rátája. A szélességi fok változó bevonásával érdemi javulást nem tapasztalunk a modelleknél, az egyenként használt változók továbbra is szignifikánsak, viszont a szélességi fok változó csupán a (6)-os és a (8)-as modell esetében szignifikáns. Eredményeink összhangban vannak a szerzők eredményeivel. Az A Panelben mutatja az első szakaszt a kétlépcsős modellünkben, a szerzőkhöz hasonlóan a mi eredményeink szerint is a telepesek halálozása önmagában 27 százalékát magyarázza a mai intézmények között kialakult különbségeknek. A 3. Táblázat B paneljét két módon is előállítottuk első körben a sokaságra, majd a mintára. Azért futtattuk le kétszer ezt a panelt, mert a sokaság esetében jelentősen nagy különbségeket tapasztaltunk és a szerzők táblázatánál, amit az eltérő adatok okoznak (esetünkben sokkal több megfigyelés maradt a modellben). A mintára futtatva az eltérések a kevesebb megfigyelés ellenére kisebbek. Az eredményünk azt mutatja a szerzőkéhez hasonlóan, hogy a korábbi intézményrendszert megtestesítő változókat a telepesek halandósága, valamint az európai települések 1900-ban határozzák meg.
+
+```{r}
+dat %>% 
+  filter(baseco == 1) %>% 
+  select(avexpr, lat_abst, ind_time, exconst_00, democ_00, exconst_01, euro1900, logem4) %>% 
+  pivot_longer(c(exconst_00, democ_00, exconst_01, euro1900, logem4)) %>% 
+  mutate(name = factor(name, levels = c("exconst_00", "democ_00", "exconst_01",
+                                        "euro1900", "logem4"), ordered = T)) %>%
+  arrange(name) %>% 
+  mutate(name = as.character(name)) %>% 
+  group_by(name) %>% 
+  # select(avexpr, value) %>% 
+  nest() %>% 
+  crossing(lat = c(T, F)) %>% 
+  mutate(
+    model = str_c("Model ", row_number()),
+    f = "avexpr ~ value",
+    f = ifelse(lat, str_c(f, " + lat_abst"), f),
+    f = ifelse(name == "exconst_01", str_c(f, " + ind_time"), f)
+  ) %>% 
+  mutate(
+    fit = map2(f, data, ~ lm(formula = .x, data = .y)),
+    coef = map(fit, broom::tidy),
+    coef = map(coef, filter, term != "(Intercept)"),
+    map_df(fit, broom::glance)
+  ) %>% 
+  select(model, name, r.squared, nobs, coef) %>% 
+  unnest(coef) %>% 
+  mutate(
+    term = ifelse(term == "value", name, term),
+    coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  ) %>% 
+  transmute(model, term, coef, r2 = scales::percent(r.squared, accuracy = 1), nobs) %>% 
+  mutate_all(as.character) %>% 
+  pivot_wider(names_from = term, values_from = coef) %>% 
+  pivot_longer(-model) %>% 
+  replace_na(list(value = "")) %>% 
+  pivot_wider(names_from = model) %>% 
+  slice(c(6, 3, 7, 5, 9, 4, 1, 2)) %>% 
+  janitor::clean_names() %>% 
+  select(name, str_c("model_", c(5, 6, 1, 2, 7, 8, 3, 4, 9, 10))) %>% 
+  set_names(str_c("Model ", 0:10)) %>% 
+  rename(Vátozó = 1) %>% 
+  knitr::kable(caption = "3-as táblázat A panelje") 
+```
+
+-   [x] A modellek sorrendjét változtassuk meg
+
+```{r}
+tibble(model = 1:10) %>% 
+  mutate(
+    depedent = case_when(
+      model < 5 ~ "exconst_00",
+      model < 9 ~ "democ_00",
+      TRUE ~ "euro1900"
+    ),
+    f = case_when(
+      model %in% c(1:2, 5:6) ~ "euro1900",
+      model %in% c(3:4, 7:10) ~ "logem4"
+    ),
+    f = ifelse(model %% 2 == 0, paste(f, "+ lat_abst"), f),
+    f = paste(depedent, "~", f)
+  ) %>% 
+  mutate(
+    fit = map(f, ~ lm(formula = ., data = filter(mutate(dat, euro1900), baseco == 1))),
+    coef = map(fit, broom::tidy),
+    map_df(fit, ~ select(broom::glance(.), r.squared, nobs))
+  ) %>% 
+  unnest(coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  mutate(coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  select(model, depedent, term, coef, r.squared, nobs) %>% 
+  pivot_wider(names_from = term, values_from = coef) %>% 
+  mutate(r.squared = scales::percent(r.squared, accuracy = 1)) %>% 
+  mutate_all(as.character) %>% 
+  pivot_longer(-(1:2)) %>% 
+  replace_na(list(value = "")) %>% 
+  select(-depedent) %>% 
+  pivot_wider(names_from = model) %>% 
+  slice(c(3, 5, 4, 1, 2)) %>% 
+  knitr::kable(caption = "3-as táblázat B panelje a mintán futtatva")
+```
+
+A 4. Táblázat mutatja meg a teljes kétlépcsős modellünket. Az eredményeink a korábbiakhoz hasonlóan itt is összhangban vannak a szerzőkével. A modellekben láthatjuk, hogy a telepesek halálozása valóban jó instrumentumnak tekinthető ugyanis, ha a jelenlegi intézményrendszerről leválasztjuk az exogén varianciát, akkor az átlagos védelem a kizsákmányolás veszélye ellen (1985-1995) index továbbra is szignifikánsan magyarázza a az egy főre eső GDP logaritmusát, de az alapmodellhez képest erősebb hatással van rá. Ez látható mindegyik modellnél, melyek más-más esetet mutatnak meg. Az (1) modell alapján az eljárás végén láthatjuk, hogy a jelenlegi intézményrendszert megragadó változónk erősen szignifikáns, valamint a koefficiens értéke (0,96) meghaladja a 2. Táblázatban szereplő alap modell (0,54) értékét. A (3) és a (4) modellben láthatjuk, hogy nem a Neo-Európaiak miatt alakul megfelelően az eredményünk, ugyanis az USA, Kanada, Ausztrália és Ausztrália nélkül végzett becslésünk is ugyanarra az eredményre jut. Az (5), a (6), a (7), és a (8) modell arra fókuszál, hogy melyik kontinenshez tartozik az adott gyarmat, de ismét azt láthatjuk, hogy nem ezek a meghatározó tényezők. Az utolsó, (9) modellben az eredményváltozót az egy dolgozóra jutó kibocsátásra cseréljük, de az eredmények így is az első modellhez hasonlóan alakulnak.
+
+```{r}
+iv_df <- tibble(model = c("simple", "wo_neo_europes", "wo_africa", "continent_dummy")) %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  crossing(lat = c(F, T)) %>% 
+  bind_rows(tibble(model = "loghj", lat = F)) %>% 
+  mutate(
+    formula = ifelse(model == "loghj", "loghjypl ~ avexpr", "logpgp95 ~ avexpr"),
+    formula = ifelse(lat, str_c(formula, " + lat_abst"), formula),
+    data = list(dat),
+    formula = ifelse(model == "continent_dummy", str_c(formula, " + africa + asia + other"), formula),
+    data = map(data, filter, baseco == 1),
+    data = map2(data, model, function(d, m) {
+      if (m == "wo_africa") {
+        return(filter(d, africa == 0))
+      }
+      
+      if (m == "wo_neo_europes") {
+        return(filter(d, !(shortnam %in% c("AUS", "CAN", "NZL", "USA"))))
+      }
+      d
+    }),
+    cont = str_sub(formula, start = 18),
+    cont = str_c("logem4", cont, sep = ""),
+    iv_formula = str_c(formula, " | ", cont),
+    ols_formula = str_c("avexpr ~ ", cont)
+  )
+```
+
+```{r}
+iv_df %>% 
+  transmute(
+    model = row_number(),
+    iv_fit = map2(iv_formula, data, ~ ivreg(formula = .x, data = .y)),
+    iv_coef = map(iv_fit, broom::tidy)
+  ) %>% 
+  unnest(iv_coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  mutate(coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  select(model, term, coef) %>% 
+  pivot_wider(names_from = model, values_from = coef) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 4 A panelje")
+```
+
+```{r}
+iv_df %>% 
+  transmute(
+    model = row_number(),
+    ols_fit = map2(ols_formula, data, ~ ivreg(formula = .x, data = .y)),
+    ols_coef = map(ols_fit, broom::tidy)
+  ) %>% 
+  unnest(ols_coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  mutate(coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  transmute(model, term, coef, map_df(ols_fit, broom::glance)) %>% 
+  transmute(model, term, coef, r2 = scales::percent(r.squared, 1)) %>% 
+  pivot_wider(names_from = term, values_from = coef) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 4 B panelje")
+```
+
+```{r}
+tibble(model = c("simple", "wo_neo_europes", "wo_africa", "continent_dummy")) %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  crossing(lat = c(F, T)) %>% 
+  bind_rows(tibble(model = "loghj", lat = F)) %>% 
+  mutate(
+    formula = ifelse(model == "loghj", "loghjypl ~ avexpr", "logpgp95 ~ avexpr"),
+    formula = ifelse(lat, str_c(formula, " + lat_abst"), formula),
+    data = list(dat),
+    formula = ifelse(model == "continent_dummy", str_c(formula, " + africa + asia"), formula),
+    data = map(data, filter, baseco == 1),
+    data = map2(data, model, function(d, m) {
+      if (m == "wo_africa") {
+        return(filter(d, africa == 0))
+      }
+      
+      if (m == "wo_neo_europes") {
+        return(filter(d, !(shortnam %in% c("AUS", "CAN", "NZL", "USA"))))
+      }
+      d
+    }),
+    ols = map2(formula, data, lm),
+    map_df(ols, ~ select(broom::glance(.), nobs)),
+    map_df(ols, ~ select(filter(broom::tidy(.), term == "avexpr"), ols_term = estimate, ols_se = std.error))
+  ) %>% 
+  select(-data, -ols, -formula) %>% 
+  transmute(
+    ave = str_c(round(ols_term, 2), " (", round(ols_se, 2), ")"),
+    n = nobs
+  ) %>% 
+  t() %>% 
+  data.frame() %>% 
+  rename_all(~ str_c("(", str_remove_all(., "\\D"), ")")) %>% 
+  knitr::kable(caption = "Táblázat 4 C panelje", row.names = T)
+```
+
+Az 5. Táblázat rámutat arra, hogy annak ellenére, hogy egy gyarmat brit nincs jelentősebb hatással a jelenlegi intézményekre és IV becslésre. Az első szakaszban az (1) és a (2) modellben sem a brit, sem a francia dummy változó nem rendelkezik szignifikáns értékkel 5%-os szignifikanciaszint mellett (csak 10%-on az (1) modellben). Emellett a (3) és a (4) modell esetében, ahol csak brit gyarmatokra futtatjuk nem látunk nagy eltéréseket a nagyobb mintához képest. A mintánkban lévő országok brit vagy francia jogi eredettel rendelkeznek, az (5) és a (6) modellben, ezért egy francia jogi dummyt szerepeltettünk, amely nincs hatással a jelenlegi intézményrendszert megragadó változó koefficiensének értékére és szignifikanciájára. Max Webertől kezdődően úgy gondolták, hogy a vallás kulcsfontosságú változó, ami jelentős hatással van a gazdasági teljesítményre. A (7), a (8) és a (9) modellben is kontrolláltunk vallási változókra, de az eredmények azt mutatják, hogy a vallásnak csekély hatása van a gazdasági teljesítményre.
+
+```{r}
+iv5_df <- tibble(model = 1:9) %>% 
+  mutate(
+    data = list(filter(dat, baseco == 1)),
+    data = map2(data, model, function(d, m) {
+      if (m %in% 3:4) {
+        return(filter(d, f_brit == 1))
+      }
+      return(d)
+    }),
+    formula = "logpgp95 ~ avexpr",
+    formula = ifelse(model %in% c(2, 4, 6, 8, 9), str_c(formula, " + lat_abst"), formula),
+    formula = ifelse(model %in% 1:2, str_c(formula, " + f_brit + f_french"), formula),
+    formula = ifelse(model %in% 5:6, str_c(formula, " + legor_fr"), formula),
+    formula = ifelse(model == 9, str_c(formula, " + f_french + legor_fr"), formula),
+    cont = str_sub(formula, start = 18),
+    cont = str_c("logem4", cont, sep = ""),
+    iv_formula = str_c(formula, " | ", cont),
+    ols_formula = str_c("avexpr ~ ", cont),
+    iv_formula = ifelse(
+      model > 6, 
+      str_c(
+        str_replace(iv_formula, "avexpr +", "avexpr + catho80 + muslim80 + protmg80 + no_cpm80 "),
+        " + catho80 + muslim80 + protmg80 + no_cpm80"
+      ),
+      iv_formula
+    )
+  )
+```
+
+```{r}
+iv5_df %>% 
+  transmute(
+    model = row_number(),
+    iv_fit = map2(iv_formula, data, ~ ivreg(formula = .x, data = .y)),
+    iv_coef = map(iv_fit, broom::tidy)
+  ) %>% 
+  unnest(iv_coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  mutate(coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  select(model, term, coef) %>% 
+  pivot_wider(names_from = model, values_from = coef) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 5 A panelje")
+```
+
+```{r eval = FALSE}
+iv5_df %>% 
+  transmute(
+    model = row_number(),
+    iv_fit = map2(iv_formula, data, ~ ivreg(formula = .x, data = .y)),
+    iv_coef = map(iv_fit, broom::tidy)
+  ) %>% 
+  filter(model > 6) %>% 
+  pull(iv_fit) %>% 
+  map(car::linearHypothesis, c("catho80 = 0", "muslim80 = 0", "protmg80 = 0", "no_cpm80 = 0"))
+```
+
+A vallási változóink p-értéke úgyanúgy növekszik modellenként, de nálunk a másodikban lényegesen nagyobb (2%), majd a harmadikban kisebb (18%). Bár a konklúzión ez nem változtat.
+
+```{r}
+iv5_df %>% 
+  transmute(
+    model = row_number(),
+    ols_fit = map2(ols_formula, data, ~ ivreg(formula = .x, data = .y)),
+    ols_coef = map(ols_fit, broom::tidy)
+  ) %>% 
+  unnest(ols_coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  mutate(coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  transmute(model, term, coef, map_df(ols_fit, broom::glance)) %>% 
+  transmute(model, term, coef, r2 = scales::percent(r.squared, 1)) %>% 
+  pivot_wider(names_from = term, values_from = coef) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 5 B panelje")
+```
+
+```{r fig.height=8, fig.cap="Acemoglu cikkének adatainak összevetése a mieinkkel"}
+names(ace_data5) %>% 
+  setdiff("sjlofr") %>% 
+  c("legor_fr") %>% 
+  {select(dat, .)} %>% 
+  rename(sjlofr = legor_fr) %>% 
+  filter(baseco == 1) %>% 
+  pivot_longer(-shortnam) %>% 
+  left_join(
+    ace_data5 %>% 
+      pivot_longer(-shortnam) %>% 
+      rename(ace_value = value)
+  ) %>% 
+  mutate(diff = value / ace_value) %>% 
+  ggplot(aes(name, shortnam, fill = diff)) + 
+  geom_tile(color = "grey20") + 
+  labs(fill = "")
+```
+
+```{r eval = FALSE}
+ace_data5 %>% 
+  filter(shortnam == "MAR") %>% 
+  pull(no_cpm80)
+```
+
+[A Laporta cikk az egy mi!!??? A `no_cpm80` változót átvesszük Acemoglutól.]
+
+```{r}
+dat <- dat %>% 
+  select(-no_cpm80) %>% 
+  left_join(
+    ace_data5 %>% 
+      select(shortnam, no_cpm80)
+  )
+```
+
+```{r}
+iv5_df <- tibble(model = 1:9) %>% 
+  mutate(
+    data = list(filter(dat, baseco == 1)),
+    data = map2(data, model, function(d, m) {
+      if (m %in% 3:4) {
+        return(filter(d, f_brit == 1))
+      }
+      return(d)
+    }),
+    formula = "logpgp95 ~ avexpr",
+    formula = ifelse(model %in% c(2, 4, 6, 8, 9), str_c(formula, " + lat_abst"), formula),
+    formula = ifelse(model %in% 1:2, str_c(formula, " + f_brit + f_french"), formula),
+    formula = ifelse(model %in% 5:6, str_c(formula, " + legor_fr"), formula),
+    formula = ifelse(model == 9, str_c(formula, " + f_french + legor_fr"), formula),
+    cont = str_sub(formula, start = 18),
+    cont = str_c("logem4", cont, sep = ""),
+    iv_formula = str_c(formula, " | ", cont),
+    ols_formula = str_c("avexpr ~ ", cont),
+    iv_formula = ifelse(
+      model > 6, 
+      str_c(
+        str_replace(iv_formula, "avexpr +", "avexpr + catho80 + muslim80 + protmg80 + no_cpm80 "),
+        " + catho80 + muslim80 + protmg80 + no_cpm80"
+      ),
+      iv_formula
+    )
+  )
+```
+
+```{r}
+iv5_df %>% 
+  transmute(
+    model = row_number(),
+    iv_fit = map2(iv_formula, data, ~ ivreg(formula = .x, data = .y)),
+    iv_coef = map(iv_fit, broom::tidy)
+  ) %>% 
+  unnest(iv_coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  mutate(coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  select(model, term, coef) %>% 
+  pivot_wider(names_from = model, values_from = coef) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 5 A panelje 2")
+```
+
+A cikk alapján nem tudtuk eldönteni, hogy a vallási változókat csak a 2. fázisnál alkalmazza-e a becslésnél. Az R azonban nem engedi, hogy több regresszort alkalmazzunk a második regressziónál, mint az elsőben, így benne hagytuk. A 9-es modell valamiért eltér...
+
+```{r eval = FALSE}
+iv5_df %>% 
+  transmute(
+    model = row_number(),
+    iv_fit = map2(iv_formula, data, ~ ivreg(formula = .x, data = .y)),
+    iv_coef = map(iv_fit, broom::tidy)
+  ) %>% 
+  filter(model > 6) %>% 
+  pull(iv_fit) %>% 
+  map(car::linearHypothesis, c("catho80 = 0", "muslim80 = 0", "protmg80 = 0", "no_cpm80 = 0"))
+```
+
+A vallási változóink p-értéke úgyanúgy növekszik modellenként, de nálunk a másodikban lényegesen nagyobb (2%), majd a harmadikban kisebb (18%). Bár a konklúzión ez nem változtat.
+
+```{r}
+iv5_df %>% 
+  transmute(
+    model = row_number(),
+    ols_fit = map2(ols_formula, data, ~ ivreg(formula = .x, data = .y)),
+    ols_coef = map(ols_fit, broom::tidy)
+  ) %>% 
+  unnest(ols_coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  mutate(coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  transmute(model, term, coef, map_df(ols_fit, broom::glance)) %>% 
+  transmute(model, term, coef, r2 = scales::percent(r.squared, 1)) %>% 
+  pivot_wider(names_from = term, values_from = coef) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 5 B panelje 2")
+```
+
+```{r}
+tibble(model = 1:9) %>% 
+  mutate(
+    data = list(filter(dat, baseco == 1)),
+    data = map2(data, model, function(d, m) {
+      if (m %in% 3:4) {
+        return(filter(d, f_brit == 1))
+      }
+      return(d)
+    }),
+    formula = "logpgp95 ~ avexpr",
+    formula = ifelse(model %in% c(2, 4, 6, 8, 9), str_c(formula, " + lat_abst"), formula),
+    formula = ifelse(model %in% 1:2, str_c(formula, " + f_brit + f_french"), formula),
+    formula = ifelse(model %in% 5:6, str_c(formula, " + legor_fr"), formula),
+    formula = ifelse(model == 9, str_c(formula, " + f_french + legor_fr"), formula),
+    ols = map2(formula, data, lm),
+    map_df(ols, ~ select(filter(broom::tidy(.), term == "avexpr"), ols_term = estimate, ols_se = std.error)),
+    nobs = map_dbl(data, nrow)
+  ) %>% 
+  select(-data, -ols) %>% 
+  transmute(
+    ave = str_c(round(ols_term, 2), " (", round(ols_se, 2), ")"),
+    n = nobs
+  ) %>% 
+  t() %>% 
+  data.frame() %>% 
+  rename_all(~ str_c("(", str_remove_all(., "\\D"), ")")) %>% 
+  knitr::kable(caption = "Táblázat 5 C panelje", row.names = T)
+```
+
+Korábbi kutatások úgy találták, hogy az aktuális fejlettségi szintben szerepet játszanak az adott országban megjelenő betegségek (Afrika fejletlenségét részben a maláriának és a sárgaláznak tulajdonítják), a csecsemőhalandóság, a születéskor várható élettartam, valamint a földrajzi elhelyezkedés. A 7. Táblázatban ezekre is kontrollálunk. Eredményeink hasonlóak a szerzőkéhez különösen a B és a C panelben a mintaelemszámtól eltekintve. Az (1) és a (2) modellben a malária változó bevonása nem okoz változást, magában a malária változó nem bír szignifikáns magyarázó erővel, míg kulcs változónk továbbra is jelentős befolyással van a jelenlegi fejlettségi szintre. Ugyanez a helyzet a születéskor várható élettartam és a csecsemőhalandóság változók bevonásával (3)-(6) modellek. A (7)-(9) modellek a földrajzi elhelyezkedéssel összefüggésben lévő változók bevonásával vizsgálják a helyzetet, de fő változónkra nincsenek hatással. Az utolsó két modell esetében pedig sárgalázat használjuk fel, de ez sem változtat a korábbi eredményeinken.
+
+```{r}
+iv_df6 <- tibble(model = 1:9) %>% 
+  mutate(
+    data = list(filter(dat, baseco == 1)),
+    data = map(data, mutate, edes1975 = edes1975 / 100),
+    formula = "logpgp95 ~ logem4",
+    formula = ifelse(model %in% c(2, 4, 6, 8:9), str_c(formula, " + lat_abst"), formula),
+    cont = case_when(
+      model %in% 1:2 ~ "temp1 + temp2 + temp3 + temp4 + temp5 + humid1 + humid2 + humid3 + humid4", 
+      model %in% 3:4 ~ "edes1975",
+      model %in% 5:6 ~ "steplow + stepmid + deslow + desmid + drystep + drywint + landlock + goldm + iron + silv + zinc + oilres",
+      model %in% 7:8 ~ "avelf",
+      TRUE ~ "temp1 + temp2 + temp3 + temp4 + temp5 + humid1 + humid2 + humid3 + humid4 + edes1975 + steplow + stepmid + deslow + desmid + drystep + drywint + landlock + goldm + iron + silv + zinc + oilres + avelf" 
+    )
+  )
+```
+
+```{r}
+iv_df6 %>% 
+  mutate(
+    formula = str_replace_all(formula, "logem4", "avexpr"),
+    formula = str_c(formula, " + ", cont),
+    cont = str_c(cont, " + logem4"),
+    iv_formula = str_c(formula, " | ", cont),
+    iv_fit = map2(iv_formula, data, ~ ivreg(formula = .x, data = .y)),
+    iv_coef = map(iv_fit, broom::tidy)
+  ) %>% 
+  unnest(iv_coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  mutate(coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  select(model, term, coef) %>% 
+  pivot_wider(names_from = model, values_from = coef) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 6 A panel")
+
+```
+
+-   [ ] 2 OLS-el
+
+```{r}
+iv_df6 %>% 
+  mutate(
+    formula = str_replace(formula, "logpgp95", "avexpr"),
+    formula = str_c(formula, " + ", cont),
+    fit = map2(formula, data, ~ lm(formula = .x, data = .y)),
+    coef = map(fit, broom::tidy),
+    map_df(fit, broom::glance)
+  ) %>% 
+  select(model, coef, r.squared) %>% 
+  unnest(coef) %>% 
+  filter(term %in% c("logem4", "lat_abst")) %>% 
+  mutate(
+    coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")"),
+    r.squared = scales::percent(r.squared, accuracy = 1)
+  ) %>% 
+  select(model, term, r.squared, coef) %>% 
+  pivot_wider(names_from = term, values_from = coef) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "Táblázat 6 B panel")
+```
+
+```{r}
+iv_df6 %>% 
+  mutate(
+    formula = str_c(formula, " + ", cont),
+    formula = str_replace_all(formula, "logem4", "avexpr"),
+    fit = map2(formula, data, ~ lm(formula = .x, data = .y)),
+    coef = map(fit, broom::tidy)
+  ) %>% 
+  unnest(coef) %>% 
+  filter(term == "avexpr") %>% 
+  transmute(ave = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  t() %>% 
+  data.frame() %>% 
+  rename_all(~ str_c("(", str_remove_all(., "\\D"), ")")) %>% 
+  knitr::kable(caption = "Táblázat 6 C panelje", row.names = T)
+```
+
+------------------------------------------------------------------------
+
+```{r}
+iv_df6 <- tibble(model = 1:9) %>% 
+  mutate(
+    data = list(filter(dat, baseco == 1)),
+    data = map(data, mutate, edes1975 = edes1975 / 100),
+    f1 = "avexpr ~ logem4",
+    f1 = ifelse(model %in% c(2, 4, 6, 8:9), str_c(f1, " + lat_abst"), f1),
+    cont = case_when(
+      model %in% 1:2 ~ "temp1 + temp2 + temp3 + temp4 + temp5 + humid1 + humid2 + humid3 + humid4", 
+      model %in% 3:4 ~ "edes1975",
+      model %in% 5:6 ~ "steplow + stepmid + deslow + desmid + drystep + drywint + landlock + goldm + iron + silv + zinc + oilres",
+      model %in% 7:8 ~ "avelf",
+      TRUE ~ "temp1 + temp2 + temp3 + temp4 + temp5 + humid1 + humid2 + humid3 + humid4 + edes1975 + steplow + stepmid + deslow + desmid + drystep + drywint + landlock + goldm + iron + silv + zinc + oilres + avelf" 
+    ),
+    f1 = str_c(f1, " + ", cont),
+    fit1 = map2(data, f1, ~ lm(data = .x, formula = .y, na.action = na.exclude)),
+    data2 = map2(data, fit1, ~ mutate(.x, avexpr = fitted(.y))),
+    f2 = map_chr(cont, ~ str_c("logpgp95 ~ avexpr + ", str_c(., collapse = " + "))),
+    f2 = ifelse(str_detect(f1, "lat_abst"), str_c(f2, " + lat_abst"), f2),
+    fit2 = map2(data2, f2, ~ lm(data = .x, formula = .y)),
+    fit3 = map2(data, f2, ~ lm(data = .x, formula = .y))
+  )
+```
+
+- [ ] latitude legyen a stage 2-ben is
+
+```{r}
+iv_df6 %>% 
+  select(fit2) %>% 
+  transmute(model = row_number(), map(fit2, broom::tidy)) %>% 
+  unnest() %>% 
+  transmute(model, term, estimate = str_c(round(estimate, 2), " (", round(std.error
+, 2), ")")) %>% 
+  pivot_wider(names_from = model, values_from = estimate) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  filter(term %in% c("avexpr", "lat_abst", "edes1975", "landlock", "avelf")) %>%
+  knitr::kable(caption = "Táblázat 6 A panel")
+```
+
+```{r}
+iv_df6 %>% 
+  transmute(model = row_number(), map(fit1, broom::tidy)) %>% 
+  unnest() %>% 
+  transmute(model, term, estimate = str_c(round(estimate, 2), " (", round(std.error
+, 2), ")")) %>% 
+  pivot_wider(names_from = model, values_from = estimate) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  filter(term %in% c("logem4", "lat_abst")) %>% 
+  knitr::kable(caption = "Táblázat 6 B panel")
+```
+
+```{r}
+iv_df6 %>% 
+  select(fit2) %>% 
+  transmute(model = row_number(), map(fit2, broom::tidy)) %>% 
+  unnest() %>% 
+  transmute(model, term, estimate = str_c(round(estimate, 2), " (", round(std.error
+, 2), ")")) %>% 
+  pivot_wider(names_from = model, values_from = estimate) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  filter(term %in% c("avexpr")) %>%
+  knitr::kable(caption = "Táblázat 6 C panel") # TODO check?
+```
+
+
+```{r}
+iv_df7 <- tibble(
+  model = 1:11,
+  var_list = list(
+    c("malfal94"),
+    c("malfal94", "lat_abst"),
+    c("leb95"),
+    c("lat_abst", "leb95"),
+    c("imr95"),
+    c("lat_abst", "imr95"),
+    c("malfal94"),
+    c("lat_abst", "leb95"),
+    c("imr95"),
+    c("yellow"),
+    c("yellow")
+  ),
+  type = case_when(
+    model < 7 ~ "only",
+    model == 10 ~ "wo_logem",
+    model == 11 ~ "wo_logem_lat",
+    TRUE ~ "all_right"
+  ),
+  data = map2(var_list, type, function(var_list, type) {
+    if (type == "only") {
+      ace_data7 %>% 
+        filter(baseco == 1) %>%
+        select(c(logpgp95, avexpr, logem4, var_list)) %>% 
+        na.omit()
+    } else {
+      ace_data7 %>% 
+        filter(baseco == 1) %>%
+        select(c(shortnam, logpgp95, avexpr, logem4, lat_abst, meantemp, lt100km,  var_list)) %>% 
+        left_join(dat[c("shortnam", "africa", "asia", "other")]) %>% 
+        select(-shortnam) %>% 
+        na.omit()
+    }
+  } 
+  )
+) %>% 
+  mutate(
+    data = map(data, na.omit),
+    first_stage = pmap(list(type, var_list, data), function(type, var_list, data) {
+      if (type == "only") {
+        lm(formula = avexpr ~ .-logpgp95, data = data)
+      } else if (type == "wo_logem") {
+        lm(formula = avexpr ~ yellow, data = data)
+      } else if (type == "wo_logem_lat") {
+        lm(formula = avexpr ~ yellow + africa + asia + other, data = data)
+      }
+      else {
+        lm(formula = avexpr ~ logem4 + lat_abst + meantemp + lt100km, data = data)
+      }
+    }),
+    data_iv = map2(data, first_stage, ~ mutate(.x, avexpr = fitted(.y))),
+  ) %>%
+  mutate(
+    data_iv = map(data_iv, select, -logem4),
+    data_iv = map2(data_iv, type, function(x, y) {
+      if (y == "all_right"| y == "wo_logem") { # TODO
+        if ("yellow" %in% names(x)) {
+          select(x, -lat_abst, -meantemp, -lt100km, -africa, -asia, -other, -yellow)
+        } else {
+          select(x, -lat_abst, -meantemp, -lt100km, -africa, -asia, -other)
+        }
+      } else if (y == "wo_logem_lat") {
+        select(x, -lat_abst, -meantemp, -lt100km, -yellow)
+      } else {
+        x
+      }
+    }),
+    second_stage = map(data_iv, lm, formula = logpgp95 ~ .),
+    data_ols = map(var_list, ~ select(filter(dat, baseco == 1),
+                                      c("logpgp95", "avexpr", .))),
+    ols = map(data_ols, lm, formula = logpgp95 ~ .)
+  )
+```
+
+- [x] 11-es modellnél a kontinens dummyk mindegyik stagebe
+
+```{r}
+iv_df7 %>% 
+  transmute(model, coef = map(second_stage, broom::tidy)) %>% 
+  unnest(coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  transmute(
+    model = paste("Model", model), 
+    term,
+    value = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  ) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "7. táblázat A panel")
+```
+
+```{r}
+iv_df7 %>% 
+  transmute(
+    model,
+    map_df(first_stage, ~ select(broom::glance(.), "r.squared")),
+    map(first_stage, broom::tidy)
+  ) %>% 
+  unnest() %>% 
+  filter(term != "(Intercept)") %>% 
+  transmute(
+    model = paste0("Model", model), 
+    term,
+    r.squared = scales::percent(r.squared),
+    value = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  )  %>% 
+  pivot_wider(names_from = term) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>%
+  column_to_rownames("name") %>% 
+  knitr::kable(caption = "7. táblázat B panel")
+```
+
+-   [x] 8-as modellhez kell a life expectancy
+-   [x] 10-es modellnél nem kell a logem
+-   [x] C panel
+
+```{r}
+iv_df7 %>% 
+  transmute(
+    model,
+    map_df(ols, ~ select(broom::glance(.), r.squared, nobs)),
+    map_df(ols, ~ filter(broom::tidy(.), term == "avexpr"))
+  ) %>% 
+  transmute(
+    model = paste("Model", model), 
+    n = as.character(nobs),
+    avexpr = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  ) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  column_to_rownames("name") %>% 
+  rename_all(~ str_c("(", str_remove_all(., "\\D"), ")")) %>% 
+  knitr::kable(caption = "7. táblázat C panelje", row.names = T)
+```
+
+```{r}
+var_list <- iv_df7 %>% 
+  pull(var_list) %>% 
+  reduce(c) %>% 
+  unique() %>% 
+  c("logpgp95", "avexpr")
+
+bind_rows(
+  dat %>% 
+    select(shortnam, var_list) %>% 
+    pivot_longer(-1) %>% 
+    mutate(type = "our"),
+  ace_data7 %>% 
+    select(shortnam, var_list) %>% 
+    pivot_longer(-1) %>% 
+    mutate(type = "ace")
+) %>% 
+  pivot_wider(names_from = type) %>% 
+  mutate(d = our / ace - 1) %>% 
+  ggplot() +
+  aes(x = name, y = shortnam, fill = d) +
+  geom_tile(color = "grey50", size = .001) +
+  scale_fill_viridis_c(labels = scales::percent) +
+  labs(title = "A cikkben használt adattól vett százalékos eltérés", fill = "Eltérés") +
+  theme(
+    legend.position = "bottom"
+  )
+```
+
+Az ábra alapján érdemes lenne Acemoglu halálozási adatával dolgozni inkább.
+
+```{r}
+dat <- dat %>% 
+  select(-malfal94) %>% 
+  left_join(select(ace_data7, shortnam, malfal94))
+```
+
+```{r}
+iv_df7 <- tibble(
+  model = 1:11,
+  var_list = list(
+    c("malfal94"),
+    c("malfal94", "lat_abst"),
+    c("leb95"),
+    c("lat_abst", "leb95"),
+    c("imr95"),
+    c("lat_abst", "imr95"),
+    c("malfal94"),
+    c("lat_abst", "leb95"),
+    c("imr95"),
+    c("yellow"),
+    c("yellow")
+  ),
+  type = case_when(
+    model < 7 ~ "only",
+    model > 9 ~ "wo_logem",
+    TRUE ~ "all_right"
+  ),
+  data = map2(var_list, type, function(var_list, type) {
+    if (type == "only") {
+      ace_data7 %>% 
+        filter(baseco == 1) %>%
+        select(c(logpgp95, avexpr, logem4, var_list)) %>% 
+        na.omit()
+    } else {
+      ace_data7 %>% 
+        filter(baseco == 1) %>%
+        select(c(logpgp95, avexpr, logem4, lat_abst, meantemp, lt100km,  var_list)) %>% 
+        na.omit()
+    }
+  } 
+  )
+) %>% 
+  mutate(
+    data = map(data, na.omit),
+    first_stage = pmap(list(type, var_list, data), function(type, var_list, data) {
+      if (type == "only") {
+        lm(formula = avexpr ~ .-logpgp95, data = data)
+      } else if (type == "wo_logem") {
+        lm(formula = avexpr ~ .-logpgp95-logem4, data = data)
+      } else {
+        lm(formula = avexpr ~ logem4 + lat_abst + meantemp + lt100km, data = data)
+      }
+    }),
+    data_iv = map2(data, first_stage, ~ mutate(.x, avexpr = fitted(.y))),
+  ) %>%
+  mutate(
+    data_iv = map(data_iv, select, -logem4),
+    data_iv = map2(data_iv, model, function(x, y) {
+      if (y == "all_right") {
+        select(x, -lat_abst, -meantemp, -lt100km)
+      } else {
+        x
+      }
+    }),
+    second_stage = map(data_iv, lm, formula = logpgp95 ~ .),
+    data_ols = map(var_list, ~ select(filter(dat, baseco == 1),
+                                      c("logpgp95", "avexpr", .))),
+    ols = map(data_ols, lm, formula = logpgp95 ~ .)
+  )
+```
+
+```{r}
+iv_df7 %>% 
+  transmute(model, coef = map(second_stage, broom::tidy)) %>% 
+  unnest(coef) %>% 
+  filter(term != "(Intercept)") %>% 
+  transmute(
+    model = paste("Model", model), 
+    term,
+    value = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  ) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>% 
+  knitr::kable(caption = "7. táblázat A panel b")
+```
+
+```{r}
+iv_df7 %>% 
+  transmute(
+    model,
+    map_df(first_stage, ~ select(broom::glance(.), "r.squared")),
+    map(first_stage, broom::tidy)
+  ) %>% 
+  unnest() %>% 
+  filter(term != "(Intercept)") %>% 
+  transmute(
+    model = paste("Model", model), 
+    term,
+    r.squared = scales::percent(r.squared),
+    value = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  )  %>% 
+  pivot_wider(names_from = term) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  mutate_all(~ ifelse(is.na(.), "", .)) %>%
+  knitr::kable(caption = "7. táblázat B panel b")
+```
+
+```{r}
+iv_df7 %>% 
+  transmute(
+    model,
+    map_df(ols, ~ select(broom::glance(.), r.squared, nobs)),
+    map_df(ols, ~ filter(broom::tidy(.), term == "avexpr"))
+  ) %>% 
+  transmute(
+    model = paste("Model", model), 
+    r2 = scales::percent(r.squared, accuracy = .01, decimal.mark = ","),
+    n = as.character(nobs),
+    avexpr = str_c(round(estimate, 2), " (", round(std.error, 2), ")")
+  ) %>% 
+  pivot_longer(-1) %>% 
+  pivot_wider(names_from = model) %>% 
+  knitr::kable(caption = "7. táblázat C panelje b")
+```
+
+```{r}
+iv_df8 <- tibble(regressors = rep(c("euro1900", "exconst_00",
+                                    "democ_00", "exconst_01", "democ_01"), each = 2)) %>% 
+  mutate(
+    regressors = map2(regressors, row_number(), function(x, y) {
+      if (x == "exconst_01" | x == "democ_01") {
+        out <- c(x, "ind_time")
+      } else {
+        out <- x
+      }
+      
+      if (y %% 2 == 0) {
+        c(out, "lat_abst")
+      } else {
+        out
+      }
+    }),
+    data = list(filter(dat, baseco == 1)),
+    data = map2(data, regressors, ~ select(.x, c("avexpr", "logpgp95", "logem4", .y))),
+    data = map(data, na.omit),
+    f1 = map_chr(regressors, ~ str_c("avexpr ~ ", str_c(., collapse = " + "))),
+    fit1 = map2(data, f1, ~ lm(.x, formula = .y)),
+    data2 = map2(data, fit1, ~ mutate(.x, avexpr = fitted(.y))),
+    f2 = ifelse(str_detect(fit1, "lat_abst"), "logpgp95 ~ avexpr + lat_abst", "logpgp95 ~ avexpr"),
+    f2 = ifelse(str_detect(fit1, "ind_time"), str_c(f2, " + ind_time"), f2),
+    fit2 = map2(data2, f2, ~ lm(.x, formula = .y)),
+    fit3 = map2(data2, f2, ~ lm(.x, formula = str_c(.y, " + logem4"))),
+  )
+```
+
+-   [x] ind_time 7-10 first_stage
+-   [ ] exogen változó legyen mindkettőben
+
+```{r}
+iv_df8 %>% 
+  transmute(
+    coef = map(fit2, broom::tidy),
+    model = row_number()
+  ) %>% 
+  unnest() %>% 
+  filter(term != "(Intercept)") %>% 
+  transmute(model, term, coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  pivot_wider(names_from = model, values_from = coef, values_fill = "") %>% 
+  column_to_rownames("term") %>% 
+  rename_all(~ str_c("(", ., ")")) %>% 
+  knitr::kable(caption = "Táblázat 8 A panel", row.names = T)
+```
+
+```{r}
+iv_df8 %>% 
+  transmute(
+    coef = map(fit1, broom::tidy),
+    model = row_number()
+  ) %>% 
+  unnest() %>% 
+  filter(term != "(Intercept)") %>% 
+  transmute(model, term, coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  pivot_wider(names_from = model, values_from = coef, values_fill = "") %>% 
+  column_to_rownames("term") %>% 
+  rename_all(~ str_c("(", ., ")")) %>% 
+  knitr::kable(caption = "Táblázat 8 B panel", row.names = T, 
+               align = c("l", rep("c", 10)))
+```
+
+```{r fig.height=7}
+iv_df8 %>% 
+  transmute(model = str_c("Modell ", row_number()), fit2, fit3) %>% 
+  pivot_longer(-1) %>% 
+  transmute(model, name, map_df(value, ~ filter(broom::tidy(.), term == "avexpr"))) %>% 
+  mutate(
+    cl = estimate + qnorm(.025)*std.error, 
+    cu = estimate + qnorm(.975)*std.error,
+    name = ifelse(name == "fit2", "Telepesek halálozása nélkül", "Telepesek halálozásával")
+    ) %>% 
+  ggplot() + 
+  aes(y = name, color = name) + 
+  geom_errorbar(aes(xmin = cl, xmax = cu)) +
+  geom_point(aes(x = estimate)) +
+  geom_vline(xintercept = 0, lty = 2) +
+  facet_wrap(~ model, ncol = 1) +
+  theme_minimal() +
+  theme(axis.text.y = element_blank(), 
+        legend.position = "bottom") + 
+  labs(color = NULL, x = "Avexpr koeffeciensének becslése", y = NULL)
+```
+
+```{r}
+iv_df8 %>% 
+  transmute(
+    coef = map(fit3, broom::tidy),
+    model = row_number()
+  ) %>% 
+  unnest() %>% 
+  filter(term != "(Intercept)") %>% 
+  transmute(model, term, coef = str_c(round(estimate, 2), " (", round(std.error, 2), ")")) %>% 
+  pivot_wider(names_from = model, values_from = coef, values_fill = "") %>% 
+  column_to_rownames("term") %>% 
+  rename_all(~ str_c("(", ., ")")) %>% 
+  knitr::kable(caption = "Táblázat 8 D panel", row.names = T)
+```
+
+```{r}
+dat <- dat %>% 
+  mutate(ind_time = 1995 - ind_time)
+```
+
+
+```{r}
+tibble(regressors = rep(c("euro1900", "exconst_00",
+                                    "democ_00", "exconst_01", "democ_01"), each = 2)) %>% 
+  mutate(
+    regressors = map2(regressors, row_number(), function(x, y) {
+      if (x == "exconst_01" | x == "democ_01") {
+        out <- c(x, "ind_time")
+      } else {
+        out <- x
+      }
+      
+      if (y %% 2 == 0) {
+        c(out, "lat_abst")
+      } else {
+        out
+      }
+    }),
+    data = list(filter(dat, baseco == 1)),
+    data = map2(data, regressors, ~ select(.x, c("avexpr", "logpgp95", "logem4", .y))),
+    data = map(data, na.omit),
+    f1 = map_chr(regressors, ~ str_c("avexpr ~ ", str_c(., collapse = " + "), " + logem4")),
+    fit1 = map2(data, f1, ~ lm(.x, formula = .y)),
+    data2 = map2(data, fit1, ~ mutate(.x, avexpr = fitted(.y))),
+    f2 = ifelse(str_detect(fit1, "lat_abst"), "logpgp95 ~ avexpr + lat_abst", "logpgp95 ~ avexpr"),
+    f2 = ifelse(str_detect(fit1, "ind_time"), str_c(f2, " + ind_time"), f2),
+    fit2 = map2(data2, f2, ~ lm(.x, formula = .y)),
+    fit3 = map2(data2, f2, ~ lm(.x, formula = str_c(.y, " + logem4"))),
+  ) %>% 
+  transmute(
+    coef = map(fit3, broom::tidy),
+    model = row_number()
+  ) %>% 
+  unnest() %>% 
+  filter(term != "(Intercept)") %>% 
+  transmute(model, term, coef = str_c(round(estimate, 5), " (", round(std.error, 2), ")")) %>% 
+  pivot_wider(names_from = model, values_from = coef, values_fill = "") %>% 
+  column_to_rownames("term") %>% 
+  rename_all(~ str_c("(", ., ")")) %>% 
+  knitr::kable(caption = "Táblázat 8 D panel", row.names = T)
+```
+
+```{r}
+iv_df8 %>% 
+  transmute(
+    model = row_number(), 
+            fit2 = map(fit2, ~ filter(broom::tidy(.x), term == "avexpr")),
+            fit3 = map(fit3, ~ filter(broom::tidy(.x), term == "avexpr"))
+    ) %>% 
+  transmute(
+    model,
+    # https://allthingsstatistics.com/inferential-statistics/hausmans-test/
+    H = map2_dbl(fit2, fit3, ~ (.x$estimate - .y$estimate) / (.x$std.error^2 - .y$std.error^2)),
+    p.value = pchisq(q = H, df = 100)
+  )
+```
+
+```{r}
+iv_df8 %>% 
+  transmute(map2_dbl(fit2, fit3, plm::phtest))
+```
+
+```{r}
+x <- iv_df8 %>% 
+  select(data, regressors, f2) %>% 
+  mutate(
+    f2 = map_chr(regressors, 
+                 ~ str_c("logpgp95 ~ ", str_c(tail(., -1), collapse = " + "), " + avexpr | ", head(., 1))),
+    fit = map2(data, f2, ~ ivreg(data = .x, formula = .y)) 
+  ) %>% 
+  pull(fit) %>% 
+  .[[1]]
+```
+
+
+
+- [ ] D panelnél nézzük meg az ace_data-val vagy bármi
+
+Szöveggel kapcsolatos megjegyzések
+- [ ] Egy főre eső GDP
+- [ ] Mi a mondanivalója a cikknek?
+- [ ] elején még úgy tűnt, hogy a földrajz is számít -> IV javít
+- [ ] Miért van szükség az IV-ra?
+- [ ] Milyen irányba torzított az OLS
+- [ ] minta/sokaság
+- [ ] európai telepes? (szóhasználat)
+
+# Függelék
+
+## Táblázatok
+
+Table: Változók nevei
+
+|Változó.neve |Változó                                                                                       |
+|:------------|:---------------------------------------------------------------------------------------------|
+|avexpr       |Átlagos védelem a kizsákmányolás veszélye ellen, 1985-1995                                    |
+|logem4       |A telepesek halálozási rátája                                                                 |
+|avelf        |Etnolingvisztikus fragmentáció, 1960                                                          |
+|protmg80     |A protestáns vallásúak aránya a populáción belül, 1980                                        |
+|no_cpm80     |„Egyéb” vallásúak aránya a populáción belül, 1980                                             |
+|catho80      |Katolikus vallásúak aránya a populáción belül, 1980                                           |
+|muslim80     |Muszlim vallásúak aránya a populáción belül, 1980                                             |
+|legor_fr     |Dummy változó az adott ország vállalati és kereskedelmi jogának francia eredetére vonatkozóan |
+|f_brit       |Brit gyarmat                                                                                  |
+|f_french     |Francia gyarmat                                                                               |
+|temp1        |Havi középhőmérséklet                                                                         |
+|temp2        |Legalacsonyabb havi maximumhőmérséklet                                                        |
+|temp3        |Legmagasabb havi maximumhőmérséklet                                                           |
+|temp4        |Legalacsonyabb havi minimumhőmérséklet                                                        |
+|temp5        |Legmagasabb havi minimumhőmérséklet                                                           |
+|humid1       |Reggeli legalacsonyabb páratartalom                                                           |
+|humid2       |Reggeli legmagasabb páratartalom                                                              |
+|humid3       |Délutáni legalacsonyabb páratartalom                                                          |
+|humid4       |Délutáni legmagasabb páratartalom                                                             |
+|steplow      |Sztyeppei talajminőség (alacsony szélességi kör)                                              |
+|deslow       |Sivatagi talajminőség (alacsony szélességi kör)                                               |
+|stepmid      |Sztyeppei talajminőség (közepes szélességi kör)                                               |
+|desmid       |Sivatagi talajminőség (közepes szélességi kör)                                                |
+|drystep      |Száraz sztyeppei pusztaság                                                                    |
+|drywint      |Sivatagi száraz tél                                                                           |
+|edes1975     |Európai leszármazottak aránya 1975-ben                                                        |
+|euro1900     |Európai települések 1900-ban                                                                  |
+|landlock     |Tengerparti ország                                                                            |
+|goldm        |Aranytartalék aránya a világ tartalékához mérve                                               |
+|iron         |Vastartalék aránya a világ tartalékához mérve                                                 |
+|silv         |Ezüsttartalék aránya a világ tartalékához mérve                                               |
+|zinc         |Cinktartalék aránya a világ tartalékához mérve                                                |
+|oilres       |Olajtartalék (egy főre jutó ezer hordó)                                                       |
+|malfal94     |A lakosság azon aránya, amely olyan területen lakik, ahol a falciporum malária endémiás, 1994 |
+|leb95        |Születéskor várható élettartam, 1995                                                          |
+|imr95        |Ezer élveszületésre jutó gyermekhalandóság, 1995                                              |
+|meantemp     |Éves középhőmérséklet, 1987                                                                   |
+|lt100km      |A tengerparttól maximum 100 km-re fekvő területek aránya                                      |
+|yellow       |Sárgaláz-járvány 1900 előtt                                                                   |
+|lat_abst     |Az ország szélességi fokának abszolút értéke                                                  |
+|ind_time     |A függetlenség első éve                                                                       |
+|exconst_01   |A végrehajtó hatalom korlátozottsága a függetlenség első évében                               |
+|democ_01     |Demokrácia erőssége a függetlenség első évében                                                |
+|exconst_00   |A végrehajtó hatalom korlátozottsága 1900-ban                                                 |
+|democ_00     |Demokrácia erőssége 1900-ban                                                                  |
+|exconst_70   |A végrehajtó hatalom korlátozottsága 1970-ben                                                 |
+|exconst_90   |A végrehajtó hatalom korlátozottsága 1990-ben                                                 |
+|logpgp95     |Egy főre jutó GDP logaritmusa, PPP, 1995                                                      |
+|loghjypl     |Egy foglalkoztatottra jutó output logaritmusa, 1988                                           |
+|neo_europe   |Ausztrália, Kanada, Egyesült Államok, Új-Zéland                                               |
+|africa       |Afrika dummy                                                                                  |
+|asia         |Ázsia dummy                                                                                   |
+|other        |„Egyéb” kontinensek dummy-ja (nem tartalmazza Amerikát)                                       |
+
+
+## Alkalmazott R kódok
+
+```{r ref.label=setdiff(knitr::all_labels(), c("setup")), eval=FALSE, echo=T, attr.source='.numberLines'}
+```
